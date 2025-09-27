@@ -9,7 +9,7 @@ export function TeamSection() {
 
   const teamMembers = [
     {
-      name: "Dr. Sarah Chen",
+      name: "Dr. Hamza Chen",
       role: "Founder & CEO",
       expertise: "AI & Machine Learning",
       avatar: "👩🏻‍💻",
