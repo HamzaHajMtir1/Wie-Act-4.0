@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Linkedin, Github, Twitter, Star, Award, Code, Users, Heart, Sparkles, Crown, Zap, ChevronRight } from "lucide-react"
 
 export function TeamSection() {
@@ -9,55 +10,81 @@ export function TeamSection() {
 
   const teamMembers = [
     {
-      name: "Dr. Hamza Chen",
-      role: "Founder & CEO",
-      expertise: "AI & Machine Learning",
-      avatar: "👩🏻‍💻",
+      name: "Dorra Barbria",
+      role: "Chairwomen of IEEEWIE ISIMM SB",
+      image: "/team/dorra.jpg",
       gradient: "from-pink-400 to-purple-500",
       description: "Leading AI researcher with 15+ years experience in tech innovation and women empowerment.",
       achievements: ["MIT PhD", "50+ Patents", "Tech Pioneer Award"],
-      socials: { linkedin: "#", github: "#", twitter: "#" },
+      socials: { linkedin: "#", github: "#" },
       icon: Crown,
-      quote: "Technology is most powerful when it empowers everyone.",
       color: "bg-pink-500"
     },
     {
-      name: "Maria Rodriguez",
-      role: "Head of Mentorship",
-      expertise: "Software Engineering",
-      avatar: "👩🏽‍🔬",
+      name: "Maryem Teborbi",
+      role: "Secretary of IEEE WIE ISIMM SB",
+      image: "/team/mariem.jpg",
       gradient: "from-purple-400 to-pink-500",
       description: "Full-stack engineer passionate about creating inclusive tech communities and mentoring future leaders.",
       achievements: ["Google SWE", "Mentor of Year", "Open Source Contributor"],
-      socials: { linkedin: "#", github: "#", twitter: "#" },
+      socials: { linkedin: "#", github: "#" },
       icon: Users,
-      quote: "Every line of code can change someone's life.",
       color: "bg-purple-500"
     },
     {
-      name: "Dr. Aisha Patel",
-      role: "Research Director",
-      expertise: "Robotics & IoT",
-      avatar: "👩🏾‍🎓",
+      name: "Menyar",
+      role: " of IEEE WIE ISIMM SB",
+      image: "/team/menyar.jpg",
+      gradient: "from-purple-400 to-pink-500",
+      description: "Full-stack engineer passionate about creating inclusive tech communities and mentoring future leaders.",
+      achievements: ["Google SWE", "Mentor of Year", "Open Source Contributor"],
+      socials: { linkedin: "#", github: "#" },
+      icon: Users,
+      color: "bg-purple-500"
+    },
+
+        {
+      name: "Chifa",
+      role: " of IEEE WIE ISIMM SB",
+      image: "/team/chifa.jpg",
+      gradient: "from-purple-400 to-pink-500",
+      description: "Full-stack engineer passionate about creating inclusive tech communities and mentoring future leaders.",
+      achievements: ["Google SWE", "Mentor of Year", "Open Source Contributor"],
+      socials: { linkedin: "#", github: "#"},
+      icon: Users,
+      color: "bg-purple-500"
+    },
+        {
+      name: "Malek",
+      role: "Webmaster of IEEE WIE ISIMM SB",
+      image: "/team/malek.jpg",
+      gradient: "from-purple-400 to-pink-500",
+      description: "Full-stack engineer passionate about creating inclusive tech communities and mentoring future leaders.",
+      achievements: ["Google SWE", "Mentor of Year", "Open Source Contributor"],
+      socials: { linkedin: "#", github: "#"},
+      icon: Users,
+      color: "bg-purple-500"
+    },
+    {
+      name: "Hamza Haj Mtir",
+      role: "Webmaster at IEEE IAS/PES ISIMM SBJC",
+      image: "/team/hamza.jpg",
       gradient: "from-cyan-400 to-blue-500",
       description: "Robotics expert developing next-gen automation solutions and inspiring young women in STEM.",
       achievements: ["Stanford PhD", "Robotics Innovation", "IEEE Fellow"],
-      socials: { linkedin: "#", github: "#", twitter: "#" },
-      icon: Zap,
-      quote: "Innovation happens when diverse minds collaborate.",
+      socials: { linkedin: "#", github: "#"},
+      icon: Users,
       color: "bg-cyan-500"
     },
     {
-      name: "Jennifer Kim",
-      role: "Community Manager",
-      expertise: "DevOps & Cloud",
-      avatar: "👩🏻‍💼",
+      name: "Iheb Elazheri",
+      role: "Chairman of IEEE ITEAM SB",
+      image: "/team/iheb.jpg",
       gradient: "from-emerald-400 to-teal-500",
       description: "Cloud architect building scalable solutions and fostering vibrant engineering communities.",
       achievements: ["AWS Certified", "DevOps Expert", "Community Leader"],
-      socials: { linkedin: "#", github: "#", twitter: "#" },
-      icon: Heart,
-      quote: "Community is the foundation of growth.",
+      socials: { linkedin: "#", github: "#"},
+      icon: Users,
       color: "bg-emerald-500"
     }
   ]
@@ -175,8 +202,16 @@ export function TeamSection() {
                     
                     {/* Avatar with floating animation */}
                     <div className="relative mb-6 flex justify-center">
-                      <div className={`relative w-24 h-24 rounded-full bg-gradient-to-r ${member.gradient} flex items-center justify-center text-4xl transition-all duration-500 group-hover:scale-110 group-hover:animate-bounce`}>
-                        {member.avatar}
+                      <div className={`relative w-24 h-24 rounded-full bg-gradient-to-r ${member.gradient} p-1 transition-all duration-500 group-hover:scale-110 group-hover:animate-bounce overflow-hidden`}>
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-gray-800">
+                          <Image
+                            src={member.image}
+                            alt={member.name}
+                            width={96}
+                            height={96}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                         {/* Floating sparkles */}
                         <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-ping">
                           <Sparkles className="h-3 w-3 text-white" />
@@ -197,21 +232,9 @@ export function TeamSection() {
                       <p className={`text-sm font-semibold bg-gradient-to-r ${member.gradient} bg-clip-text text-transparent mb-2`}>
                         {member.role}
                       </p>
-                      <p className="text-xs text-muted-foreground mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
-                        {member.expertise}
-                      </p>
                     </div>
 
-                    {/* Quote section - appears on hover */}
-                    <div className={`transition-all duration-500 overflow-hidden ${
-                      hoveredMember === index ? 'max-h-32 opacity-100 mb-4' : 'max-h-0 opacity-0'
-                    }`}>
-                      <div className="bg-primary/5 dark:bg-primary/10 rounded-2xl p-4 border-l-4 border-primary/30">
-                        <p className="text-sm italic text-foreground/80 leading-relaxed">
-                          "{member.quote}"
-                        </p>
-                      </div>
-                    </div>
+                    
 
                     {/* Social links with bounce effect */}
                     <div className="flex justify-center space-x-3 mt-4">
@@ -227,12 +250,7 @@ export function TeamSection() {
                       >
                         <Github className="h-4 w-4" />
                       </a>
-                      <a 
-                        href={member.socials.twitter} 
-                        className="p-3 bg-sky-500/10 hover:bg-sky-500/20 text-sky-500 rounded-full transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 hover:rotate-12"
-                      >
-                        <Twitter className="h-4 w-4" />
-                      </a>
+                      
                     </div>
 
                     {/* Hover indicator */}
