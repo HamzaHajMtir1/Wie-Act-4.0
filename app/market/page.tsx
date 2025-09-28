@@ -237,25 +237,25 @@ export default function Market() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-background to-emerald-50 dark:from-background dark:via-green-900/10 dark:to-background">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 dark:from-background dark:via-primary/10 dark:to-background">
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative py-20 overflow-hidden mt-10">
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-green-200/20 to-emerald-200/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-lime-200/20 to-green-200/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-accent/10 to-primary/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-12">
             <div className="flex justify-center mb-6">
-              <div className="flex items-center space-x-2 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 px-6 py-3 rounded-full">
-                <Leaf className="h-5 w-5 text-green-600" />
-                <span className="text-green-700 dark:text-green-300 font-medium">Fresh • Local • Sustainable</span>
+              <div className="flex items-center space-x-2 bg-primary/10 dark:bg-primary/20 border border-primary/20 dark:border-primary/30 px-6 py-3 rounded-full">
+                <Leaf className="h-5 w-5 text-primary" />
+                <span className="text-primary dark:text-primary font-medium">Fresh • Local • Sustainable</span>
               </div>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6">
-              <span className="bg-gradient-to-r from-green-500 via-emerald-500 to-lime-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                 Farm Fresh
               </span>
               <br />
@@ -276,7 +276,7 @@ export default function Market() {
                   placeholder="Search for fresh produce, herbs, dairy..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 pr-4 py-6 text-lg rounded-2xl border-2 border-green-200 dark:border-green-800 focus:border-green-400 dark:focus:border-green-600 bg-white/80 dark:bg-card/80 backdrop-blur-sm shadow-lg"
+                  className="pl-12 pr-4 py-6 text-lg rounded-2xl border-2 border-primary/20 dark:border-primary/30 focus:border-primary dark:focus:border-primary bg-white/80 dark:bg-card/80 backdrop-blur-sm shadow-lg"
                 />
               </div>
             </div>
@@ -296,8 +296,8 @@ export default function Market() {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                     selectedCategory === category
-                      ? 'bg-green-500 text-white shadow-lg transform scale-105'
-                      : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50'
+                      ? 'bg-primary text-primary-foreground shadow-lg transform scale-105'
+                      : 'bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary hover:bg-primary/20 dark:hover:bg-primary/30'
                   }`}
                 >
                   {category}
@@ -312,10 +312,10 @@ export default function Market() {
                   type="checkbox"
                   checked={organicOnly}
                   onChange={(e) => setOrganicOnly(e.target.checked)}
-                  className="rounded border-green-300 text-green-600 focus:ring-green-500"
+                  className="rounded border-primary/30 text-primary focus:ring-primary"
                 />
                 <span>Organic Only</span>
-                <Leaf className="h-4 w-4 text-green-600" />
+                <Leaf className="h-4 w-4 text-primary" />
               </label>
 
               <select
@@ -329,9 +329,9 @@ export default function Market() {
                 <option value="rating">Highest Rated</option>
               </select>
 
-              <div className="flex items-center space-x-2 bg-green-100 dark:bg-green-900/30 px-3 py-2 rounded-full">
-                <ShoppingCart className="h-4 w-4 text-green-600" />
-                <span className="text-sm font-medium text-green-700 dark:text-green-300">
+              <div className="flex items-center space-x-2 bg-primary/10 dark:bg-primary/20 px-3 py-2 rounded-full">
+                <ShoppingCart className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-primary dark:text-primary">
                   {cart.length}
                 </span>
               </div>
@@ -357,7 +357,7 @@ export default function Market() {
                   className="group bg-card/80 backdrop-blur-sm border border-border/50 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2"
                 >
                   {/* Product Image & Badge */}
-                  <div className="relative p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+                  <div className="relative p-6 bg-gradient-to-br from-primary/5 to-accent/5 dark:from-primary/10 dark:to-accent/10">
                     <div className="text-8xl text-center mb-4 group-hover:scale-110 transition-transform duration-300">
                       {product.image}
                     </div>
@@ -371,7 +371,7 @@ export default function Market() {
                         </div>
                       )}
                       {product.organic && (
-                        <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
+                        <div className="bg-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-bold flex items-center">
                           <Leaf className="h-3 w-3 mr-1" />
                           Organic
                         </div>
@@ -397,7 +397,7 @@ export default function Market() {
                   <div className="p-6">
                     {/* Header */}
                     <div className="mb-4">
-                      <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-green-600 transition-colors">
+                      <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
                         {product.name}
                       </h3>
                       <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
@@ -447,7 +447,7 @@ export default function Market() {
                     {/* Price & Actions */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <span className="text-2xl font-bold text-green-600">${product.price}</span>
+                        <span className="text-2xl font-bold text-primary">${product.price}</span>
                         {product.originalPrice && (
                           <span className="text-sm text-muted-foreground line-through">
                             ${product.originalPrice}
@@ -458,7 +458,7 @@ export default function Market() {
                       <Button
                         onClick={() => addToCart(product.id)}
                         disabled={!product.inStock}
-                        className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
                       >
                         <ShoppingCart className="h-4 w-4 mr-2" />
                         {product.inStock ? 'Add to Cart' : 'Out of Stock'}
@@ -473,7 +473,7 @@ export default function Market() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-green-500 via-emerald-500 to-lime-500 text-white">
+      <section className="py-20 bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Join Our Growing Community
@@ -481,16 +481,7 @@ export default function Market() {
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
             Support women farmers, get the freshest produce, and be part of a sustainable future.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-white text-green-600 hover:bg-gray-100 px-8 py-3 rounded-full font-bold text-lg">
-              <Phone className="h-5 w-5 mr-2" />
-              Contact Sellers
-            </Button>
-            <Button variant="outline" className="border-white text-white hover:bg-white hover:text-green-600 px-8 py-3 rounded-full font-bold text-lg">
-              <Truck className="h-5 w-5 mr-2" />
-              Free Delivery
-            </Button>
-          </div>
+          
         </div>
       </section>
     </div>
