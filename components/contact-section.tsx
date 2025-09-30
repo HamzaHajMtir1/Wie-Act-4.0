@@ -32,7 +32,7 @@ export function ContactSection() {
   }
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-20 bg-background mt-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Simple Professional Header */}
@@ -50,7 +50,7 @@ export function ContactSection() {
           <div>
             <Card className="border border-border shadow-lg">
               <CardHeader className="pb-6">
-                <CardTitle className="text-2xl font-semibold text-foreground">Send us a message</CardTitle>
+                <CardTitle className="text-2xl font-bold text-primary">Send us a message</CardTitle>
                 <p className="text-muted-foreground">Fill out the form below and we'll get back to you soon.</p>
               </CardHeader>
               <CardContent className="space-y-6">

@@ -39,7 +39,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="sm"
       onClick={toggleTheme}
-      className="text-foreground hover:text-primary transition-colors duration-300"
+      className="text-foreground transition-colors duration-300 cursor-pointer"
       aria-label="Toggle theme"
     >
       {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
