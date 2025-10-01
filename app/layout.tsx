@@ -4,8 +4,8 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
-import { Navbar } from "../components/navbar"
-import { Footer } from "../components/footer"
+import { ConditionalLayout } from "@/components/conditional-layout"
+import { ThemeProvider } from "../components/theme-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -22,12 +22,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased min-h-screen flex flex-col`}>
-          <Navbar />
-          <main className="flex-1">
+        <ThemeProvider
+          defaultTheme="system"
+          storageKey="wie-ui-theme"
+        >
+          <ConditionalLayout>
             <Suspense fallback={null}>{children}</Suspense>
-          </main>
-          <Footer />
-          <Analytics />
+          </ConditionalLayout>
+        </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )
