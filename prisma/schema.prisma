@@ -21,6 +21,8 @@ model User {
   role     Role     @default(USER)
   email     String   @unique
   password  String
+  state    Boolean  @default(true)
+  stateDescription String?
   tokens    Token[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
