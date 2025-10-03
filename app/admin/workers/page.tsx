@@ -8,12 +8,15 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Phone, MapPin, Clock, UserPlus, Filter } from "lucide-react"
 import { workers } from "@/lib/worker-data"
+import { AddWorkerModal } from "@/components/add-worker-modal"
 
 export default function WorkersPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all")
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [workersList, setWorkersList] = useState(workers)
 
-  const filteredWorkers = workers.filter((worker) => {
+  const filteredWorkers = workersList.filter((worker) => {
     const matchesSearch =
       worker.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       worker.phone.includes(searchQuery) ||
@@ -24,6 +27,15 @@ export default function WorkersPage() {
     return matchesSearch && matchesStatus
   })
 
+  const handleAddWorker = (newWorker: any) => {
+    const worker = {
+      ...newWorker,
+      id: Math.max(...workersList.map(w => Number(w.id))) + 1,
+      lastSeen: "Just now"
+    }
+    setWorkersList(prev => [worker, ...prev])
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -32,7 +44,10 @@ export default function WorkersPage() {
           <h1 className="text-3xl font-bold text-foreground">Worker Management</h1>
           <p className="text-muted-foreground mt-2">Manage and monitor all farm workers</p>
         </div>
-        <Button className="gradient-accent text-primary-foreground">
+        <Button 
+          className="gradient-accent text-primary-foreground cursor-pointer"
+          onClick={() => setIsAddModalOpen(true)}
+        >
           <UserPlus className="h-4 w-4 mr-2" />
           Add New Worker
         </Button>
@@ -145,6 +160,13 @@ export default function WorkersPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Add Worker Modal */}
+      <AddWorkerModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        onAddWorker={handleAddWorker}
+      />
     </div>
   )
 }
