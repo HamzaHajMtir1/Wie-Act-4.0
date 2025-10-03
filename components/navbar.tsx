@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Menu, X, Sparkles, Users, Heart, Code, Zap } from "lucide-react"
+import { Menu, X, Sparkles, Users, Heart, Code, Zap, LogIn, UserPlus } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 
 export function Navbar() {
@@ -104,15 +104,27 @@ export function Navbar() {
           </div>
 
           {/* Creative Right Side Actions */}
-          <div className="flex items-center space-x-4">
-            {/* Join Community Button - Desktop only */}
-            <div className="hidden md:block">
-              <Button 
-                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5"
-              >
-                <Heart className="h-4 w-4 mr-2" />
-                Join Us
-              </Button>
+          <div className="flex items-center space-x-3">
+            {/* Auth Buttons - Desktop only */}
+            <div className="hidden md:flex items-center space-x-3">
+              <Link href="/login">
+                <Button 
+                  variant="ghost"
+                  className="text-foreground hover:text-primary hover:bg-primary/10 font-medium px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer"
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Sign In
+                </Button>
+              </Link>
+              
+              <Link href="/register">
+                <Button 
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Register
+                </Button>
+              </Link>
             </div>
 
             <ThemeToggle />
@@ -176,15 +188,26 @@ export function Navbar() {
               )
             })}
             
-            {/* Mobile Join Button */}
-            <div className="pt-4 border-t border-primary/20">
-              <Button 
-                className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                onClick={() => setIsOpen(false)}
-              >
-                <Heart className="h-4 w-4 mr-2" />
-                Join Our Community
-              </Button>
+            {/* Mobile Auth Buttons */}
+            <div className="pt-4 border-t border-primary/20 space-y-3">
+              <Link href="/login" onClick={() => setIsOpen(false)}>
+                <Button 
+                  variant="outline"
+                  className="w-full border-primary/30 text-primary hover:bg-primary/10 font-medium py-3 rounded-xl transition-all duration-200"
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Sign In
+                </Button>
+              </Link>
+              
+              <Link href="/register" onClick={() => setIsOpen(false)}>
+                <Button 
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Register
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

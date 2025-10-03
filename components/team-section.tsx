@@ -14,8 +14,6 @@ export function TeamSection() {
       role: "Chairwomen of IEEEWIE ISIMM SB",
       image: "/team/dorra.jpg",
       gradient: "from-pink-400 to-purple-500",
-      description: "Leading AI researcher with 15+ years experience in tech innovation and women empowerment.",
-      achievements: ["MIT PhD", "50+ Patents", "Tech Pioneer Award"],
       socials: { linkedin: "#", github: "#" },
       icon: Crown,
       color: "bg-pink-500"
@@ -25,8 +23,6 @@ export function TeamSection() {
       role: "Secretary of IEEE WIE ISIMM SB",
       image: "/team/mariem.jpg",
       gradient: "from-purple-400 to-pink-500",
-      description: "Full-stack engineer passionate about creating inclusive tech communities and mentoring future leaders.",
-      achievements: ["Google SWE", "Mentor of Year", "Open Source Contributor"],
       socials: { linkedin: "#", github: "#" },
       icon: Users,
       color: "bg-purple-500"
@@ -36,8 +32,6 @@ export function TeamSection() {
       role: " of IEEE WIE ISIMM SB",
       image: "/team/menyar.jpg",
       gradient: "from-purple-400 to-pink-500",
-      description: "Full-stack engineer passionate about creating inclusive tech communities and mentoring future leaders.",
-      achievements: ["Google SWE", "Mentor of Year", "Open Source Contributor"],
       socials: { linkedin: "#", github: "#" },
       icon: Users,
       color: "bg-purple-500"
@@ -48,8 +42,6 @@ export function TeamSection() {
       role: " of IEEE WIE ISIMM SB",
       image: "/team/chifa.jpg",
       gradient: "from-purple-400 to-pink-500",
-      description: "Full-stack engineer passionate about creating inclusive tech communities and mentoring future leaders.",
-      achievements: ["Google SWE", "Mentor of Year", "Open Source Contributor"],
       socials: { linkedin: "#", github: "#"},
       icon: Users,
       color: "bg-purple-500"
@@ -59,8 +51,6 @@ export function TeamSection() {
       role: "Webmaster of IEEE WIE ISIMM SB",
       image: "/team/malek.jpg",
       gradient: "from-purple-400 to-pink-500",
-      description: "Full-stack engineer passionate about creating inclusive tech communities and mentoring future leaders.",
-      achievements: ["Google SWE", "Mentor of Year", "Open Source Contributor"],
       socials: { linkedin: "#", github: "#"},
       icon: Users,
       color: "bg-purple-500"
@@ -70,8 +60,6 @@ export function TeamSection() {
       role: "Webmaster at IEEE IAS/PES ISIMM SBJC",
       image: "/team/hamza.jpg",
       gradient: "from-cyan-400 to-blue-500",
-      description: "Robotics expert developing next-gen automation solutions and inspiring young women in STEM.",
-      achievements: ["Stanford PhD", "Robotics Innovation", "IEEE Fellow"],
       socials: { linkedin: "#", github: "#"},
       icon: Users,
       color: "bg-cyan-500"
@@ -81,8 +69,6 @@ export function TeamSection() {
       role: "Chairman of IEEE ITEAM SB",
       image: "/team/iheb.jpg",
       gradient: "from-emerald-400 to-teal-500",
-      description: "Cloud architect building scalable solutions and fostering vibrant engineering communities.",
-      achievements: ["AWS Certified", "DevOps Expert", "Community Leader"],
       socials: { linkedin: "#", github: "#"},
       icon: Users,
       color: "bg-emerald-500"
@@ -126,53 +112,35 @@ export function TeamSection() {
   ]
 
   return (
-    <section className="py-20 bg-gradient-to-br from-background via-primary/5 to-accent/5 relative overflow-hidden">
-      {/* Floating background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-accent/10 to-primary/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Creative Header */}
+    <section className="py-20 bg-gradient-to-br from-background to-primary/5 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Simple Professional Header */}
         <div className="text-center mb-16">
-          <div className="flex justify-center mb-6">
-            <div className="flex items-center space-x-2 bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/20 px-6 py-3 rounded-full">
-              <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-              <span className="text-primary font-medium">Meet Our Amazing Team</span>
-            </div>
-          </div>
-
-          <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-              Brilliant Minds
-            </span>
-            <br />
-            <span className="text-foreground">Changing the World</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            Our <span className="text-primary">Team</span>
           </h2>
-
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Meet the passionate women leading the revolution in engineering and technology. 
-            Each bringing unique expertise and unwavering dedication to empowering others.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Meet the dedicated women leading innovation in engineering and technology, 
+            committed to empowering others and creating positive change.
           </p>
         </div>
 
-        {/* Interactive Tabs */}
+        {/* Simple Tabs */}
         <div className="flex justify-center mb-12">
-          <div className="flex bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-2">
+          <div className="flex bg-card border border-border rounded-xl p-1">
             {tabs.map((tab) => {
               const IconComponent = tab.icon
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-300 ${
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors duration-200 ${
                     activeTab === tab.id
-                      ? 'bg-primary text-primary-foreground shadow-lg transform scale-105'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}
                 >
-                  <IconComponent className="h-5 w-5" />
+                  <IconComponent className="h-4 w-4" />
                   <span className="font-medium">{tab.label}</span>
                 </button>
               )
@@ -182,82 +150,55 @@ export function TeamSection() {
 
         {/* Team Members */}
         {activeTab === "team" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {teamMembers.map((member, index) => {
-              const IconComponent = member.icon
               return (
                 <div
                   key={index}
                   className="group relative"
-                  onMouseEnter={() => setHoveredMember(index)}
-                  onMouseLeave={() => setHoveredMember(null)}
                 >
-                  {/* Floating card with 3D effect */}
-                  <div className={`relative p-6 bg-card/70 backdrop-blur-xl border border-border/50 rounded-3xl transition-all duration-500 transform group-hover:scale-105 group-hover:-translate-y-6 group-hover:rotate-1 ${
-                    hoveredMember === index ? 'shadow-2xl shadow-primary/20' : 'shadow-lg'
-                  }`}>
-                    
-                    {/* Animated gradient border */}
-                    <div className={`absolute inset-0 rounded-3xl bg-gradient-to-r ${member.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500 animate-pulse`}></div>
-                    
-                    {/* Avatar with floating animation */}
-                    <div className="relative mb-6 flex justify-center">
-                      <div className={`relative w-24 h-24 rounded-full bg-gradient-to-r ${member.gradient} p-1 transition-all duration-500 group-hover:scale-110 group-hover:animate-bounce overflow-hidden`}>
-                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-gray-800">
-                          <Image
-                            src={member.image}
-                            alt={member.name}
-                            width={96}
-                            height={96}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        {/* Floating sparkles */}
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-ping">
-                          <Sparkles className="h-3 w-3 text-white" />
-                        </div>
-                      </div>
-                      
-                      {/* Role icon with spin animation */}
-                      <div className={`absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-r ${member.gradient} rounded-full flex items-center justify-center group-hover:animate-spin transition-all duration-300 shadow-lg`}>
-                        <IconComponent className="h-5 w-5 text-white" />
+                  {/* Simple professional card */}
+                  <div className="relative p-8 bg-card border border-border rounded-2xl transition-all duration-300 hover:shadow-lg hover:border-primary/30"
+                  >
+                    {/* Simple Avatar */}
+                    <div className="mb-6 flex justify-center">
+                      <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-primary/20 transition-all duration-300 group-hover:border-primary/40">
+                        <Image
+                          src={member.image}
+                          alt={member.name}
+                          width={112}
+                          height={112}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
                       </div>
                     </div>
 
-                    {/* Member info with slide effect */}
-                    <div className="text-center transform transition-all duration-300 group-hover:translate-y-2">
-                      <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
+                    {/* Member info */}
+                    <div className="text-center">
+                      <h3 className="text-xl font-semibold text-foreground mb-2">
                         {member.name}
                       </h3>
-                      <p className={`text-sm font-semibold bg-gradient-to-r ${member.gradient} bg-clip-text text-transparent mb-2`}>
+                      <p className="text-sm text-primary font-medium mb-3">
                         {member.role}
                       </p>
                     </div>
 
-                    
-
-                    {/* Social links with bounce effect */}
-                    <div className="flex justify-center space-x-3 mt-4">
+                    {/* Simple Social links */}
+                    <div className="flex justify-center space-x-4 pt-4 border-t border-border/50">
                       <a 
                         href={member.socials.linkedin} 
-                        className="p-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-full transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 hover:rotate-12"
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors duration-200"
                       >
                         <Linkedin className="h-4 w-4" />
+                        <span className="text-sm font-medium">LinkedIn</span>
                       </a>
                       <a 
                         href={member.socials.github} 
-                        className="p-3 bg-gray-500/10 hover:bg-gray-500/20 text-gray-500 dark:text-gray-400 rounded-full transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 hover:-rotate-12"
+                        className="flex items-center space-x-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
                       >
                         <Github className="h-4 w-4" />
+                        <span className="text-sm font-medium">GitHub</span>
                       </a>
-                      
-                    </div>
-
-                    {/* Hover indicator */}
-                    <div className={`absolute bottom-2 left-1/2 transform -translate-x-1/2 transition-all duration-300 ${
-                      hoveredMember === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-                    }`}>
-                      <div className="w-8 h-1 bg-gradient-to-r from-primary to-accent rounded-full animate-pulse"></div>
                     </div>
                   </div>
                 </div>
