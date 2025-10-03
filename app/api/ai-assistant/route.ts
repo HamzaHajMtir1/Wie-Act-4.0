@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { fetchAllArticles } from '@/lib/models';
+import { searchProductsByQuery, getToolsForCrop, Product } from '@/lib/agricultural-products';
+import productsDatabase from '@/lib/products-database.json';
 
 // Test static article for development
 const STATIC_TEST_ARTICLE = {
@@ -24,7 +26,7 @@ const STATIC_TEST_ARTICLE = {
 };
 
 const AGRICULTURAL_SYSTEM_PROMPT = `
-You are AgriAssist, an AI assistant specifically designed to help women in agriculture. Your expertise includes:
+You are Touta, an AI assistant specifically designed to help women in agriculture. Your expertise includes:
 
 1. Agricultural tools and equipment recommendations
 2. Crop growing guidance (planting, care, harvesting)
@@ -32,17 +34,139 @@ You are AgriAssist, an AI assistant specifically designed to help women in agric
 4. Seasonal farming advice
 5. Pest and disease management
 6. Soil health and fertilization
+7. Product recommendations from the agricultural marketplace
 
 IMPORTANT GUIDELINES:
 - ONLY respond to agriculture-related queries
-- If asked about non-agricultural topics, politely redirect: "I'm specialized in agricultural assistance for women farmers. Please ask me about farming, crops, tools, or agricultural practices."
+- If asked about non-agricultural topics, politely redirect: "I'm Touta, specialized in agricultural assistance for women farmers. Please ask me about farming, crops, tools, or agricultural practices."
 - Provide practical, actionable advice
 - Be encouraging and supportive
 - Keep responses concise but informative
-- When recommending tools, reference available products from the database
+- When users ask for tools or products, I can search our marketplace and provide specific recommendations
+- If a user asks "I need tools for growing potatoes" or similar, I can fetch relevant products from our database
 
-If the user asks about tools or equipment, search the provided articles database and recommend relevant items.
+If the user asks about tools or equipment, search the provided articles database and marketplace products and recommend relevant items.
 `;
+
+// Enhanced helper function to detect product queries using AI decision matrix
+function detectProductQuery(message: string): { isProductQuery: boolean; searchTerms: string; category?: string } {
+  const lowerMessage = message.toLowerCase();
+  const decisionMatrix = productsDatabase.ai_decision_matrix;
+  
+  // Check against all keyword patterns
+  let isProductQuery = false;
+  let detectedCategory = '';
+  let searchTerms = message;
+  
+  // Check each category of keywords
+  for (const [category, keywords] of Object.entries(decisionMatrix.query_patterns)) {
+    if (keywords.some(keyword => lowerMessage.includes(keyword.toLowerCase()))) {
+      isProductQuery = true;
+      detectedCategory = category.replace('_keywords', '');
+      break;
+    }
+  }
+  
+  // Also check for crop-specific queries
+  for (const [crop, _] of Object.entries(decisionMatrix.crop_specific)) {
+    if (lowerMessage.includes(crop.toLowerCase())) {
+      isProductQuery = true;
+      searchTerms = crop;
+      break;
+    }
+  }
+  
+  // Fallback patterns for general product queries
+  const productPatterns = [
+    /i need.*tool/i,
+    /what.*tool/i,
+    /need.*for.*growing/i,
+    /tool.*for/i,
+    /equipment.*for/i,
+    /recommend.*tool/i,
+    /best.*tool/i,
+    /show.*tool/i,
+    /find.*tool/i,
+    /buy.*tool/i,
+    /purchase.*tool/i,
+    /where.*get/i,
+    /need.*equipment/i,
+    /help.*find/i,
+    /looking.*for/i
+  ];
+
+  if (!isProductQuery) {
+    isProductQuery = productPatterns.some(pattern => pattern.test(message));
+  }
+  
+  return {
+    isProductQuery,
+    searchTerms: isProductQuery ? searchTerms : '',
+    category: detectedCategory
+  };
+}
+
+// Enhanced intelligent search using JSON database
+function intelligentProductSearch(query: string, category?: string): Product[] {
+  const products = productsDatabase.agricultural_products;
+  const decisionMatrix = productsDatabase.ai_decision_matrix;
+  const lowerQuery = query.toLowerCase();
+  
+  let relevantProducts: any[] = [];
+  
+  // First, try crop-specific matching
+  for (const [crop, productNames] of Object.entries(decisionMatrix.crop_specific)) {
+    if (lowerQuery.includes(crop)) {
+      const cropProducts = products.filter(p => 
+        productNames.some(name => p.name.includes(name))
+      );
+      relevantProducts.push(...cropProducts);
+    }
+  }
+  
+  // If no crop-specific match, use category-based search
+  if (relevantProducts.length === 0 && category) {
+    const categoryKey = `${category}_keywords` as keyof typeof decisionMatrix.query_patterns;
+    const categoryKeywords = decisionMatrix.query_patterns[categoryKey] || [];
+    relevantProducts = products.filter(product => 
+      categoryKeywords.some((keyword: string) => 
+        product.name.toLowerCase().includes(keyword) ||
+        product.tags.some(tag => tag.toLowerCase().includes(keyword)) ||
+        product.aiKeywords.some(aiKeyword => aiKeyword.toLowerCase().includes(keyword))
+      )
+    );
+  }
+  
+  // Fallback to general search if no specific matches
+  if (relevantProducts.length === 0) {
+    relevantProducts = products.filter(product => 
+      product.name.toLowerCase().includes(lowerQuery) ||
+      product.description.toLowerCase().includes(lowerQuery) ||
+      product.tags.some(tag => tag.toLowerCase().includes(lowerQuery)) ||
+      product.aiKeywords.some(keyword => keyword.toLowerCase().includes(lowerQuery)) ||
+      product.useCases.some(useCase => useCase.toLowerCase().includes(lowerQuery))
+    );
+  }
+  
+  // Convert to Product format and limit results
+  return relevantProducts.slice(0, 8).map(p => ({
+    id: p.id,
+    name: p.name,
+    category: p.category,
+    price: p.price,
+    originalPrice: p.originalPrice,
+    seller: p.seller,
+    location: p.location,
+    image: p.image,
+    organic: p.organic,
+    quantity: p.quantity,
+    inStock: p.inStock,
+    featured: p.featured,
+    tags: p.tags,
+    description: p.description,
+    useCases: p.useCases
+  }));
+}
 
 // Helper function to generate intelligent fallback responses
 function generateIntelligentFallback(message: string, articles: any[]): string {
@@ -91,6 +215,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if this is a product query
+    const productQuery = detectProductQuery(message);
+    
     // Get articles data (static for testing, live for production)
     let articles;
     if (useStaticData) {
@@ -106,10 +233,26 @@ export async function POST(request: Request) {
       }
     }
 
+    // If it's a product query, search for relevant products using enhanced search
+    let relevantProducts: Product[] = [];
+    if (productQuery.isProductQuery) {
+      relevantProducts = intelligentProductSearch(productQuery.searchTerms, productQuery.category);
+      console.log(`🛍️ Found ${relevantProducts.length} relevant products for query: "${productQuery.searchTerms}" (category: ${productQuery.category})`);
+    }
+
     // Prepare context for AI
     const articlesContext = articles.map((article: any) => 
       `Title: ${article.title}\nContent: ${article.content}\nPrice: $${article.price}\nDiscount: ${article.discount}%`
     ).join('\n\n---\n\n');
+
+    // Add product context if relevant products found
+    let productContext = '';
+    if (relevantProducts.length > 0) {
+      productContext = '\n\nAVAILABLE PRODUCTS IN MARKETPLACE:\n' + 
+        relevantProducts.slice(0, 5).map((product: Product) => 
+          `${product.name} - $${product.price} (${product.category}) - ${product.description} - Use cases: ${product.useCases.join(', ')}`
+        ).join('\n');
+    }
 
     // Check if query is agriculture-related
     const isAgricultureQuery = checkIfAgricultureRelated(message);
@@ -121,7 +264,9 @@ export async function POST(request: Request) {
         response: redirectResponse,
         responseTime: Date.now() - startTime,
         articlesUsed: 0,
-        testMode: useStaticData
+        testMode: useStaticData,
+        hasProducts: false,
+        products: []
       });
     }
 
@@ -153,7 +298,7 @@ export async function POST(request: Request) {
             messages: [
               {
                 role: 'system',
-                content: `${AGRICULTURAL_SYSTEM_PROMPT}\n\nAvailable Agricultural Tools and Articles:\n${articlesContext}`
+                content: `${AGRICULTURAL_SYSTEM_PROMPT}\n\nAvailable Agricultural Tools and Articles:\n${articlesContext}${productContext}`
               },
               {
                 role: 'user',
@@ -195,7 +340,10 @@ export async function POST(request: Request) {
         responseTime: Date.now() - startTime,
         articlesUsed: articles.length,
         testMode: useStaticData,
-        modelUsed: modelUsed
+        modelUsed: modelUsed,
+        hasProducts: relevantProducts.length > 0,
+        products: relevantProducts.slice(0, 10), // Return top 10 products
+        isProductQuery: productQuery.isProductQuery
       });
     }
 
@@ -207,7 +355,10 @@ export async function POST(request: Request) {
       responseTime: Date.now() - startTime,
       articlesUsed: articles.length,
       testMode: useStaticData,
-      modelUsed: 'fallback'
+      modelUsed: 'fallback',
+      hasProducts: relevantProducts.length > 0,
+      products: relevantProducts.slice(0, 10),
+      isProductQuery: productQuery.isProductQuery
     });
 
   } catch (error) {

@@ -18,8 +18,13 @@ import {
   Sparkles,
   Leaf,
   Sprout,
-  TreePine
+  TreePine,
+  ShoppingCart,
+  Eye
 } from "lucide-react";
+import { Product } from "@/lib/agricultural-products";
+import { AgriQueryResults } from "./agri-query-results";
+import { useRouter } from 'next/navigation';
 
 interface Message {
   id: string;
@@ -28,9 +33,13 @@ interface Message {
   timestamp: Date;
   messageType: 'text' | 'voice' | 'image';
   isPlaying?: boolean;
+  products?: Product[];
+  hasProducts?: boolean;
+  isProductQuery?: boolean;
 }
 
 const AgricultureAIAssistant = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -97,10 +106,15 @@ const AgricultureAIAssistant = () => {
         type: 'bot',
         content: data.response || 'I apologize, but I encountered an issue processing your request. Please try again.',
         timestamp: new Date(),
-        messageType: 'text'
+        messageType: 'text',
+        products: data.products || [],
+        hasProducts: data.hasProducts || false,
+        isProductQuery: data.isProductQuery || false
       };
 
       setMessages(prev => [...prev, aiResponse]);
+      
+      // Products are now displayed directly in the chat interface
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage: Message = {
@@ -165,31 +179,67 @@ const AgricultureAIAssistant = () => {
     }, 3000);
   };
 
+  const handleViewAllProducts = (products: Product[]) => {
+    // Create a comprehensive search term that includes all relevant keywords
+    const allCategories = [...new Set(products.map(p => p.category))];
+    const allTags = [...new Set(products.flatMap(p => p.tags))];
+    
+    // Combine categories and important tags for a broader search
+    let searchTerms = [];
+    
+    // Add all unique categories
+    searchTerms.push(...allCategories);
+    
+    // Add key tags that appear in multiple products (more relevant)
+    const tagCounts = allTags.reduce((acc, tag) => {
+      acc[tag] = (acc[tag] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const importantTags = Object.entries(tagCounts)
+      .filter(([_, count]) => count >= 2 || ['organic', 'fresh', 'natural', 'vegetables', 'fruits'].includes(_))
+      .map(([tag, _]) => tag);
+    
+    searchTerms.push(...importantTags);
+    
+    // Create search term (use 'organic' if it's in the products, otherwise use a broader term)
+    const finalSearchTerm = searchTerms.includes('organic') ? 'organic' : 
+                           searchTerms.includes('vegetables') ? 'vegetables' :
+                           searchTerms.includes('fresh') ? 'fresh' :
+                           allCategories.join(' ');
+    
+    // Navigate to market page with search parameter
+    router.push(`/market?search=${encodeURIComponent(finalSearchTerm)}`);
+    
+    // Close the chat modal after navigation
+    setIsOpen(false);
+  };
+
   return (
     <>
       {/* Creative Agricultural Toggle Button */}
       <div className={`fixed bottom-6 right-6 z-50 transition-all duration-500 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}>
         <Button
           onClick={() => setIsOpen(true)}
-          className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 via-emerald-600 to-green-700 shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 group relative overflow-hidden"
+          className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 via-rose-600 to-pink-700 shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 group relative overflow-hidden"
           style={{
             animation: 'float 3s ease-in-out infinite'
           }}
         >
           {/* Animated background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-emerald-500/20 animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-pink-400/20 to-rose-500/20 animate-pulse"></div>
           
           {/* Floating agricultural particles */}
-          <div className="absolute top-1 right-1 w-2 h-2 bg-yellow-300 rounded-full animate-bounce"></div>
-          <div className="absolute bottom-2 left-2 w-1 h-1 bg-green-200 rounded-full animate-bounce delay-200"></div>
-          <div className="absolute top-3 left-1 w-1.5 h-1.5 bg-emerald-200 rounded-full animate-bounce delay-500"></div>
+          <div className="absolute top-1 right-1 w-2 h-2 bg-pink-300 rounded-full animate-bounce"></div>
+          <div className="absolute bottom-2 left-2 w-1 h-1 bg-rose-200 rounded-full animate-bounce delay-200"></div>
+          <div className="absolute top-3 left-1 w-1.5 h-1.5 bg-pink-200 rounded-full animate-bounce delay-500"></div>
           
           {/* Main agricultural icon */}
           <Leaf className="h-7 w-7 text-white group-hover:rotate-12 transition-transform duration-300" />
           
           {/* Multiple pulse rings */}
-          <div className="absolute inset-0 rounded-full border-2 border-green-300/30 animate-ping"></div>
-          <div className="absolute inset-0 rounded-full border border-emerald-300/20 animate-ping delay-300"></div>
+          <div className="absolute inset-0 rounded-full border-2 border-pink-300/30 animate-ping"></div>
+          <div className="absolute inset-0 rounded-full border border-rose-300/20 animate-ping delay-300"></div>
           
           {/* Smart agricultural notification indicator */}
           <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse shadow-lg">
@@ -208,26 +258,26 @@ const AgricultureAIAssistant = () => {
         
         {/* Chat Container - 60% width, positioned below navbar */}
         <div className={`absolute right-0 top-20 h-[calc(100vh-5rem)] transition-all duration-500 ${isOpen ? 'w-[60%]' : 'w-0'}`}>
-          <Card className="h-full bg-white/95 backdrop-blur-xl border border-green-200/50 shadow-2xl flex flex-col rounded-tl-2xl">
+          <Card className="h-full bg-white/95 backdrop-blur-xl border border-pink-200/50 shadow-2xl flex flex-col rounded-tl-2xl">
             
             {/* Creative Agricultural Header */}
-            <div className="flex items-center justify-between p-4 border-b border-green-100 bg-gradient-to-r from-green-50 via-emerald-25 to-green-50 rounded-tl-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-pink-100 bg-gradient-to-r from-pink-50 via-rose-25 to-pink-50 rounded-tl-2xl">
               <div className="flex items-center space-x-3">
                 <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full flex items-center justify-center shadow-lg">
                     <Leaf className="h-6 w-6 text-white animate-pulse" />
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-pink-400 rounded-full border-2 border-white flex items-center justify-center">
                     <Sparkles className="h-2 w-2 text-white" />
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 bg-clip-text text-transparent">
-                    AgriAssist
+                  <h3 className="text-xl font-bold bg-gradient-to-r from-pink-600 via-rose-600 to-pink-700 bg-clip-text text-transparent">
+                    Touta
                   </h3>
-                  <div className="text-sm text-green-600 flex items-center space-x-1">
+                  <div className="text-sm text-pink-600 flex items-center space-x-1">
                     <span>Your Smart Agricultural Companion</span>
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
                   </div>
                 </div>
               </div>
@@ -243,7 +293,7 @@ const AgricultureAIAssistant = () => {
             </div>
 
             {/* Messages Container */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-green-25/30 to-white">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-pink-25/30 to-white">
               {isHydrated && messages.map((message) => (
                 <div
                   key={message.id}
@@ -255,8 +305,8 @@ const AgricultureAIAssistant = () => {
                   {/* Avatar */}
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
                     message.type === 'user' 
-                      ? 'bg-gradient-to-br from-blue-500 to-blue-600' 
-                      : 'bg-gradient-to-br from-green-500 to-emerald-600'
+                      ? 'bg-gradient-to-br from-pink-500 to-rose-600' 
+                      : 'bg-gradient-to-br from-pink-500 to-rose-600'
                   }`}>
                     {message.type === 'user' ? (
                       <User className="h-5 w-5 text-white" />
@@ -268,8 +318,8 @@ const AgricultureAIAssistant = () => {
                   {/* Message Bubble */}
                   <div className={`max-w-[75%] rounded-2xl p-4 shadow-lg backdrop-blur-sm ${
                     message.type === 'user'
-                      ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white ml-auto'
-                      : 'bg-white/90 border border-green-100 text-gray-800'
+                      ? 'bg-gradient-to-br from-pink-500 to-rose-600 text-white ml-auto'
+                      : 'bg-white/90 border border-pink-100 text-gray-800'
                   }`}>
                     
                     {/* Message Type Icons */}
@@ -314,6 +364,62 @@ const AgricultureAIAssistant = () => {
 
                     <p className="text-sm leading-relaxed whitespace-pre-line">{message.content}</p>
                     
+                    {/* Product Recommendations Display */}
+                    {message.type === 'bot' && message.hasProducts && message.products && message.products.length > 0 && (
+                      <div className="mt-4 p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl border border-pink-100">
+                        <div className="flex items-center gap-2 mb-3">
+                          <ShoppingCart className="h-4 w-4 text-pink-600" />
+                          <span className="text-sm font-medium text-pink-700">
+                            Recommended Products ({message.products.length})
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto">
+                          {message.products.slice(0, 3).map((product) => (
+                            <div key={product.id} className="flex items-center gap-3 p-3 bg-white rounded-xl border border-pink-200/50 hover:shadow-lg hover:border-pink-300 transition-all duration-300 group">
+                              <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{product.image}</div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-semibold text-gray-800 truncate group-hover:text-pink-700 transition-colors">{product.name}</h4>
+                                <p className="text-xs text-gray-600 truncate">{product.description}</p>
+                                <div className="flex items-center justify-between mt-1">
+                                  <span className="text-sm font-bold text-pink-600">${product.price}</span>
+                                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{product.category}</span>
+                                </div>
+                              </div>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                className="border-pink-200 hover:bg-pink-50 text-pink-700 h-8 px-3 shadow-sm hover:shadow-md transition-all duration-200 group-hover:scale-105"
+                                onClick={() => {
+                                  // Add to cart functionality
+                                  console.log('Add to cart:', product.id);
+                                }}
+                              >
+                                <ShoppingCart className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {message.products.length > 3 && (
+                          <div className="mt-4 text-center">
+                            <Button 
+                              size="sm" 
+                              className="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group relative overflow-hidden"
+                              onClick={() => handleViewAllProducts(message.products || [])}
+                            >
+                              {/* Animated background */}
+                              <div className="absolute inset-0 bg-gradient-to-r from-pink-400/20 to-rose-500/20 animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                              <Eye className="h-4 w-4 mr-2 relative z-10 group-hover:scale-110 transition-transform duration-200" />
+                              <span className="relative z-10">View All {message.products.length} Products</span>
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full"></div>
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
                     <div className={`text-xs mt-2 opacity-70 ${
                       message.type === 'user' ? 'text-white/70' : 'text-gray-500'
                     }`}>
@@ -326,15 +432,15 @@ const AgricultureAIAssistant = () => {
               {/* Typing Indicator */}
               {isHydrated && isTyping && (
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg">
                     <Leaf className="h-5 w-5 text-white" />
                   </div>
-                  <div className="bg-white/90 border border-green-100 rounded-2xl p-4 shadow-lg backdrop-blur-sm">
+                  <div className="bg-white/90 border border-pink-100 rounded-2xl p-4 shadow-lg backdrop-blur-sm">
                     <div className="flex space-x-2 items-center">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-100"></div>
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-200"></div>
-                      <span className="text-xs text-green-600 ml-2">AgriAssist is thinking...</span>
+                      <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce delay-100"></div>
+                      <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce delay-200"></div>
+                      <span className="text-xs text-pink-600 ml-2">Touta is thinking...</span>
                     </div>
                   </div>
                 </div>

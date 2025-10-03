@@ -1,144 +1,16 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { Search, Filter, Star, Heart, ShoppingCart, Leaf, MapPin, Clock, Users, Award, Truck, Phone } from "lucide-react"
+import { useState, useMemo, useEffect, Suspense } from "react"
+import { useSearchParams } from 'next/navigation'
+import { Search, Star, Heart, ShoppingCart, Leaf, MapPin, Users } from "lucide-react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { agriculturalProducts } from "@/lib/agricultural-products";
 
-interface Product {
-  id: number
-  name: string
-  category: string
-  price: number
-  originalPrice?: number
-  seller: string
-  location: string
-  image: string
-  organic: boolean
-  quantity: string
-  inStock: boolean
-  featured: boolean
-  tags: string[]
-}
+const products = agriculturalProducts;
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Organic Fresh Tomatoes",
-    category: "Vegetables",
-    price: 4.99,
-    originalPrice: 6.99,
-    seller: "Sarah's Green Farm",
-    location: "California, USA",
-    image: "🍅",
-    organic: true,
-    quantity: "2 lbs",
-    inStock: true,
-    featured: true,
-    tags: ["organic", "fresh", "local", "pesticide-free"]
-  },
-  {
-    id: 2,
-    name: "Sweet Strawberry Basket",
-    category: "Fruits",
-    price: 8.99,
-    originalPrice: 11.99,
-    seller: "Maria's Berry Farm",
-    location: "Oregon, USA",
-    image: "🍓",
-    organic: true,
-    quantity: "3 lbs basket",
-    inStock: true,
-    featured: true,
-    tags: ["sweet", "berry", "seasonal", "vitamin-c"]
-  },
-  {
-    id: 3,
-    name: "Fresh Spinach Leaves",
-    category: "Leafy Greens",
-    price: 3.49,
-    seller: "Green Valley Co-op",
-    location: "Vermont, USA",
-    image: "🥬",
-    organic: false,
-    quantity: "1 lb bunch",
-    inStock: true,
-    featured: false,
-    tags: ["iron-rich", "leafy", "healthy", "versatile"]
-  },
-  {
-    id: 4,
-    name: "Golden Sweet Corn",
-    category: "Vegetables",
-    price: 5.99,
-    seller: "Sunshine Acres",
-    location: "Iowa, USA",
-    image: "🌽",
-    organic: false,
-    quantity: "6 ears",
-    inStock: true,
-    featured: true,
-    tags: ["sweet", "non-gmo", "summer", "grilling"]
-  },
-  {
-    id: 5,
-    name: "Crisp Green Apples",
-    category: "Fruits",
-    price: 6.49,
-    seller: "Orchard Sisters",
-    location: "Washington, USA",
-    image: "🍏",
-    organic: true,
-    quantity: "2 lbs bag",
-    inStock: true,
-    featured: false,
-    tags: ["crisp", "tart", "baking", "long-lasting"]
-  },
-  {
-    id: 6,
-    name: "Mixed Herb Bundle",
-    category: "Herbs",
-    price: 12.99,
-    seller: "Herb Haven Farm",
-    location: "California, USA",
-    image: "🌿",
-    organic: true,
-    quantity: "Mixed bundle",
-    inStock: true,
-    featured: true,
-    tags: ["aromatic", "cooking", "natural", "flavorful"]
-  },
-  {
-    id: 7,
-    name: "Farm Fresh Eggs",
-    category: "Dairy & Eggs",
-    price: 7.99,
-    seller: "Happy Hen Farm",
-    location: "Texas, USA",
-    image: "🥚",
-    organic: true,
-    quantity: "12 count",
-    inStock: true,
-    featured: true,
-    tags: ["free-range", "protein", "fresh", "nutritious"]
-  },
-  {
-    id: 8,
-    name: "Organic Honey Jar",
-    category: "Pantry",
-    price: 15.99,
-    seller: "Bee Happy Apiaries",
-    location: "Montana, USA",
-    image: "🍯",
-    organic: true,
-    quantity: "16 oz jar",
-    inStock: true,
-    featured: false,
-    tags: ["raw", "natural", "sweetener", "wildflower"]
-  }
-]
-
-export default function Market() {
+function MarketContent() {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [sortBy, setSortBy] = useState("featured")
@@ -146,14 +18,44 @@ export default function Market() {
   const [cart, setCart] = useState<number[]>([])
   const [wishlist, setWishlist] = useState<number[]>([])
 
-  const categories = ["All", "Fruits", "Vegetables", "Leafy Greens", "Herbs", "Dairy & Eggs", "Pantry"]
+  const categories = ["All", "Tools", "Equipment", "Fruits", "Vegetables", "Seeds", "Plants", "Fertilizers", "Soil", "Pest Control"]
+
+  // Handle URL search parameters
+  useEffect(() => {
+    const urlSearchTerm = searchParams.get('search')
+    if (urlSearchTerm) {
+      setSearchTerm(decodeURIComponent(urlSearchTerm))
+      // Also try to set the category if it matches
+      const matchingCategory = categories.find(cat => 
+        cat.toLowerCase() === urlSearchTerm.toLowerCase()
+      )
+      if (matchingCategory) {
+        setSelectedCategory(matchingCategory)
+      }
+      // Scroll to products section after setting search
+      setTimeout(() => {
+        const productsSection = document.getElementById('products-section')
+        if (productsSection) {
+          productsSection.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+    }
+  }, [searchParams])
 
   const filteredProducts = useMemo(() => {
     let filtered = products.filter(product => {
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      // If there's a search term, check if it matches name, tags, category, or description
+      const matchesSearch = !searchTerm || 
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        product.useCases.some(useCase => useCase.toLowerCase().includes(searchTerm.toLowerCase()))
       
+      // Category filter - if "All" is selected, show all categories
       const matchesCategory = selectedCategory === "All" || product.category === selectedCategory
+      
+      // Organic filter
       const matchesOrganic = !organicOnly || product.organic
       
       return matchesSearch && matchesCategory && matchesOrganic
@@ -292,7 +194,7 @@ export default function Market() {
       </section>
 
       {/* Products Grid */}
-      <section className="py-12">
+      <section id="products-section" className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {filteredProducts.length === 0 ? (
             <div className="text-center py-20">
@@ -332,13 +234,13 @@ export default function Market() {
                     {/* Wishlist */}
                     <button
                       onClick={() => toggleWishlist(product.id)}
-                      className="absolute top-4 right-4 p-2 rounded-full bg-white/80 dark:bg-card/80 backdrop-blur-sm hover:bg-white dark:hover:bg-card transition-all duration-300 transform hover:scale-110"
+                      className="absolute top-4 right-4 p-2 rounded-full bg-white/90 dark:bg-card/90 backdrop-blur-sm hover:bg-white dark:hover:bg-card transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl group"
                     >
                       <Heart 
-                        className={`h-5 w-5 transition-colors ${
+                        className={`h-5 w-5 transition-all duration-200 ${
                           wishlist.includes(product.id) 
-                            ? 'text-red-500 fill-red-500' 
-                            : 'text-muted-foreground'
+                            ? 'text-red-500 fill-red-500 animate-pulse' 
+                            : 'text-rose-400 hover:text-red-500 group-hover:fill-red-100'
                         }`} 
                       />
                     </button>
@@ -387,10 +289,12 @@ export default function Market() {
                       <Button
                         onClick={() => addToCart(product.id)}
                         disabled={!product.inStock}
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+                        className="bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 hover:from-emerald-600 hover:via-green-600 hover:to-emerald-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
                       >
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                        {/* Animated background */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-emerald-500/20 animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <ShoppingCart className="h-4 w-4 mr-2 text-white group-hover:text-green-100 transition-all duration-200 relative z-10 group-hover:rotate-12" />
+                        <span className="relative z-10">{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
                       </Button>
                     </div>
                   </div>
@@ -414,5 +318,20 @@ export default function Market() {
         </div>
       </section>
     </div>
+  )
+}
+
+export default function Market() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading marketplace...</p>
+        </div>
+      </div>
+    }>
+      <MarketContent />
+    </Suspense>
   )
 }
