@@ -28,11 +28,20 @@ export function ThemeProvider({
   storageKey = "wie-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage?.getItem(storageKey) as Theme) || defaultTheme
-  )
+  const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    const savedTheme = typeof window !== 'undefined' 
+      ? (localStorage?.getItem(storageKey) as Theme) || defaultTheme
+      : defaultTheme
+    setTheme(savedTheme)
+    setMounted(true)
+  }, [defaultTheme, storageKey])
+
+  useEffect(() => {
+    if (!mounted) return
+    
     const root = window.document.documentElement
 
     root.classList.remove("light", "dark")
@@ -53,7 +62,9 @@ export function ThemeProvider({
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      localStorage?.setItem(storageKey, theme)
+      if (typeof window !== 'undefined') {
+        localStorage?.setItem(storageKey, theme)
+      }
       setTheme(theme)
     },
   }
