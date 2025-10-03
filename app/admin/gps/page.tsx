@@ -1,16 +1,26 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { MapPin, Navigation, Users, Maximize2 } from "lucide-react"
+import { MapPin, Navigation, Users, Maximize2, ArrowLeft } from "lucide-react"
 import { workers } from "@/lib/worker-data"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 export default function GPSTrackingPage() {
+  const searchParams = useSearchParams()
+  const workerIdParam = searchParams.get('worker')
   const [selectedWorker, setSelectedWorker] = useState<string | null>(null)
   const activeWorkers = workers.filter((w) => w.status === "active")
+
+  useEffect(() => {
+    if (workerIdParam) {
+      setSelectedWorker(workerIdParam)
+    }
+  }, [workerIdParam])
 
   return (
     <div className="space-y-6">

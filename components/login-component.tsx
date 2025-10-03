@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft, UserPlus } from "lucide-react"
 
 export default function LoginComponent() {
@@ -29,9 +30,14 @@ export default function LoginComponent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-primary/5 flex items-center justify-center p-4">
+      {/* Theme Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+
       <div className="w-full max-w-md mt-20">
         {/* Back to Home */}
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <Link 
             href="/"
             className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors"
@@ -41,9 +47,9 @@ export default function LoginComponent() {
           </Link>
         </div>
 
-        <Card className="border border-border shadow-2xl bg-pink-100">
+        <Card className="border border-border shadow-2xl bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center shadow-lg">
               <LogIn className="h-8 w-8 text-primary-foreground" />
             </div>
             <div>
@@ -130,7 +136,7 @@ export default function LoginComponent() {
                 <Link href="/register">
                   <Button 
                     variant="outline"
-                    className="w-full h-12 border-primary/30 text-primary  font-medium rounded-lg cursor-pointer"
+                    className="w-full h-12 border-primary/30 text-primary hover:text-white font-medium rounded-lg cursor-pointer"
                   >
                     <UserPlus className="mr-2 h-4 w-4" />
                     Create Account

@@ -211,7 +211,7 @@ export function TeamSection() {
         {activeTab === "impact" && (
           <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-3xl p-8 md:p-12 backdrop-blur-sm border border-primary/20">
             <div className="text-center mb-12">
-              <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
+              <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-6 cursor-pointer">
                 Our <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Impact</span>
               </h3>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
