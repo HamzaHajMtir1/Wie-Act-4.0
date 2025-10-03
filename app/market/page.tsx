@@ -11,15 +11,10 @@ interface Product {
   category: string
   price: number
   originalPrice?: number
-  rating: number
-  reviews: number
   seller: string
   location: string
   image: string
-  description: string
   organic: boolean
-  freshness: string
-  harvest: string
   quantity: string
   inStock: boolean
   featured: boolean
@@ -33,15 +28,10 @@ const products: Product[] = [
     category: "Vegetables",
     price: 4.99,
     originalPrice: 6.99,
-    rating: 4.8,
-    reviews: 127,
     seller: "Sarah's Green Farm",
     location: "California, USA",
     image: "🍅",
-    description: "Farm-fresh organic tomatoes, perfect for cooking and salads. Grown without pesticides.",
     organic: true,
-    freshness: "Harvested Today",
-    harvest: "2 days ago",
     quantity: "2 lbs",
     inStock: true,
     featured: true,
@@ -53,15 +43,10 @@ const products: Product[] = [
     category: "Fruits",
     price: 8.99,
     originalPrice: 11.99,
-    rating: 4.9,
-    reviews: 203,
     seller: "Maria's Berry Farm",
     location: "Oregon, USA",
     image: "🍓",
-    description: "Sweet, juicy strawberries perfect for desserts, smoothies, or eating fresh.",
     organic: true,
-    freshness: "Peak Season",
-    harvest: "This morning",
     quantity: "3 lbs basket",
     inStock: true,
     featured: true,
@@ -72,15 +57,10 @@ const products: Product[] = [
     name: "Fresh Spinach Leaves",
     category: "Leafy Greens",
     price: 3.49,
-    rating: 4.6,
-    reviews: 89,
     seller: "Green Valley Co-op",
     location: "Vermont, USA",
     image: "🥬",
-    description: "Crisp, fresh spinach leaves rich in iron and vitamins. Perfect for salads and cooking.",
     organic: false,
-    freshness: "Very Fresh",
-    harvest: "1 day ago",
     quantity: "1 lb bunch",
     inStock: true,
     featured: false,
@@ -91,15 +71,10 @@ const products: Product[] = [
     name: "Golden Sweet Corn",
     category: "Vegetables",
     price: 5.99,
-    rating: 4.7,
-    reviews: 156,
     seller: "Sunshine Acres",
     location: "Iowa, USA",
     image: "🌽",
-    description: "Sweet, tender corn on the cob. Perfect for grilling or boiling. Non-GMO variety.",
     organic: false,
-    freshness: "Fresh Picked",
-    harvest: "Yesterday",
     quantity: "6 ears",
     inStock: true,
     featured: true,
@@ -110,15 +85,10 @@ const products: Product[] = [
     name: "Crisp Green Apples",
     category: "Fruits",
     price: 6.49,
-    rating: 4.5,
-    reviews: 92,
     seller: "Orchard Sisters",
     location: "Washington, USA",
     image: "🍏",
-    description: "Crisp, tart green apples. Great for baking pies or eating fresh.",
     organic: true,
-    freshness: "Orchard Fresh",
-    harvest: "3 days ago",
     quantity: "2 lbs bag",
     inStock: true,
     featured: false,
@@ -129,15 +99,10 @@ const products: Product[] = [
     name: "Mixed Herb Bundle",
     category: "Herbs",
     price: 12.99,
-    rating: 4.9,
-    reviews: 78,
     seller: "Herb Haven Farm",
     location: "California, USA",
     image: "🌿",
-    description: "Fresh bundle of basil, rosemary, thyme, and oregano. Perfect for cooking.",
     organic: true,
-    freshness: "Just Harvested",
-    harvest: "This morning",
     quantity: "Mixed bundle",
     inStock: true,
     featured: true,
@@ -148,15 +113,10 @@ const products: Product[] = [
     name: "Farm Fresh Eggs",
     category: "Dairy & Eggs",
     price: 7.99,
-    rating: 4.8,
-    reviews: 234,
     seller: "Happy Hen Farm",
     location: "Texas, USA",
     image: "🥚",
-    description: "Fresh, free-range eggs from happy hens. Rich in protein and nutrients.",
     organic: true,
-    freshness: "Daily Fresh",
-    harvest: "Today",
     quantity: "12 count",
     inStock: true,
     featured: true,
@@ -167,15 +127,10 @@ const products: Product[] = [
     name: "Organic Honey Jar",
     category: "Pantry",
     price: 15.99,
-    rating: 5.0,
-    reviews: 67,
     seller: "Bee Happy Apiaries",
     location: "Montana, USA",
     image: "🍯",
-    description: "Pure, raw organic honey from wildflower meadows. Natural sweetener.",
     organic: true,
-    freshness: "Raw & Pure",
-    harvest: "Last month",
     quantity: "16 oz jar",
     inStock: true,
     featured: false,
@@ -196,7 +151,6 @@ export default function Market() {
   const filteredProducts = useMemo(() => {
     let filtered = products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       
       const matchesCategory = selectedCategory === "All" || product.category === selectedCategory
@@ -212,9 +166,6 @@ export default function Market() {
         break
       case "price-high":
         filtered.sort((a, b) => b.price - a.price)
-        break
-      case "rating":
-        filtered.sort((a, b) => b.rating - a.rating)
         break
       case "featured":
         filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
@@ -399,26 +350,8 @@ export default function Market() {
                     <div className="mb-4">
                       <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
                         {product.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
+                      </h3>                      
                       
-                      {/* Rating & Reviews */}
-                      <div className="flex items-center space-x-2 mb-2">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-4 w-4 ${
-                                i < Math.floor(product.rating) 
-                                  ? 'text-yellow-500 fill-yellow-500' 
-                                  : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                          <span className="ml-1 text-sm font-medium">{product.rating}</span>
-                        </div>
-                        <span className="text-xs text-muted-foreground">({product.reviews} reviews)</span>
-                      </div>
 
                       {/* Seller & Location */}
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-3">
@@ -434,10 +367,6 @@ export default function Market() {
 
                       {/* Freshness Info */}
                       <div className="flex items-center justify-between text-xs bg-green-50 dark:bg-green-900/20 rounded-lg p-2 mb-4">
-                        <div className="flex items-center text-green-700 dark:text-green-300">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {product.freshness}
-                        </div>
                         <div className="text-green-600 font-medium">
                           {product.quantity}
                         </div>
