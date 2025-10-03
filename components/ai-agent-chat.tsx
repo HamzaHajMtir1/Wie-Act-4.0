@@ -46,8 +46,11 @@ const AgricultureAIAssistant = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speechText, setSpeechText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -59,12 +62,55 @@ const AgricultureAIAssistant = () => {
       {
         id: '1',
         type: 'bot',
-        content: "Hello! I'm AgriAssist, your smart agricultural companion. I'm here to help you with farming advice, crop guidance, and agricultural tools. How can I assist you today?",
+        content: "Hello! I'm Touta, your smart agricultural companion. I'm here to help you with farming advice, crop guidance, and agricultural tools. You can type your questions or use the microphone button to speak! How can I assist you today?",
         timestamp: new Date(),
         messageType: 'text'
       }
     ]);
     setIsHydrated(true);
+    
+    // Initialize Speech Recognition
+    if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
+      
+      recognitionRef.current.onstart = () => {
+        setIsListening(true);
+        setSpeechText('');
+      };
+      
+      recognitionRef.current.onresult = (event: any) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        setSpeechText(transcript);
+        
+        // If final result, send the message
+        if (event.results[event.results.length - 1].isFinal) {
+          setInputMessage(transcript);
+          setTimeout(() => {
+            if (transcript.trim()) {
+              handleSendMessage();
+            }
+          }, 500);
+        }
+      };
+      
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+        setIsRecording(false);
+      };
+      
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+        setIsRecording(false);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -72,18 +118,22 @@ const AgricultureAIAssistant = () => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    const messageContent = isListening ? speechText : inputMessage;
+    if (!messageContent.trim()) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
-      content: inputMessage,
+      content: messageContent,
       timestamp: new Date(),
-      messageType: 'text'
+      messageType: isListening ? 'voice' : 'text'
     };
 
     setMessages(prev => [...prev, newMessage]);
     setInputMessage("");
+    setSpeechText("");
+    setIsListening(false);
+    setIsRecording(false);
     setIsTyping(true);
 
     try {
@@ -92,7 +142,7 @@ const AgricultureAIAssistant = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: inputMessage }),
+        body: JSON.stringify({ message: messageContent }),
       });
 
       if (!response.ok) {
@@ -131,20 +181,19 @@ const AgricultureAIAssistant = () => {
   };
 
   const handleVoiceMessage = () => {
-    setIsRecording(!isRecording);
-    // Simulate voice recording
-    if (!isRecording) {
-      setTimeout(() => {
-        setIsRecording(false);
-        const voiceMessage: Message = {
-          id: Date.now().toString(),
-          type: 'user',
-          content: "Voice message: How to grow organic vegetables?",
-          timestamp: new Date(),
-          messageType: 'voice'
-        };
-        setMessages(prev => [...prev, voiceMessage]);
-      }, 3000);
+    if (!recognitionRef.current) {
+      alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+      return;
+    }
+    
+    if (isRecording) {
+      // Stop recording
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    } else {
+      // Start recording
+      setIsRecording(true);
+      recognitionRef.current.start();
     }
   };
 
@@ -450,7 +499,7 @@ const AgricultureAIAssistant = () => {
             </div>
 
             {/* Creative Agricultural Input Area */}
-            <div className="p-4 border-t border-green-100 bg-gradient-to-r from-green-50/80 via-white to-emerald-50/80 backdrop-blur-sm">
+            <div className="p-4 border-t border-pink-100 bg-gradient-to-r from-pink-50/80 via-white to-rose-50/80 backdrop-blur-sm">
               <div className="flex items-center space-x-3">
                 
                 {/* Image Upload */}
@@ -458,10 +507,10 @@ const AgricultureAIAssistant = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
-                  className="rounded-full bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-200 hover:border-emerald-400 hover:from-emerald-100 hover:to-green-200 transition-all duration-300 hover:scale-110 hover:shadow-lg h-10 w-10 p-0"
+                  className="rounded-full bg-gradient-to-br from-pink-50 to-rose-100 border-pink-200 hover:border-pink-400 hover:from-pink-100 hover:to-rose-200 transition-all duration-300 hover:scale-110 hover:shadow-lg h-10 w-10 p-0"
                   title="Upload plant image for analysis"
                 >
-                  <ImageIcon className="h-4 w-4 text-emerald-600 hover:text-emerald-700" />
+                  <ImageIcon className="h-4 w-4 text-pink-600 hover:text-pink-700" />
                 </Button>
                 <input
                   ref={fileInputRef}
@@ -479,30 +528,35 @@ const AgricultureAIAssistant = () => {
                   className={`rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg h-10 w-10 p-0 ${
                     isRecording 
                       ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white border-red-400 animate-pulse shadow-lg' 
-                      : 'bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-200 hover:border-blue-400 hover:from-blue-100 hover:to-indigo-200'
+                      : 'bg-gradient-to-br from-pink-50 to-rose-100 border-pink-200 hover:border-pink-400 hover:from-pink-100 hover:to-rose-200'
                   }`}
                   title={isRecording ? "Stop recording" : "Record voice message"}
                 >
-                  {isRecording ? <MicOff className="h-4 w-4 text-white" /> : <Mic className="h-4 w-4 text-blue-600 hover:text-blue-700" />}
+                  {isRecording ? <MicOff className="h-4 w-4 text-white" /> : <Mic className="h-4 w-4 text-pink-600 hover:text-pink-700" />}
                 </Button>
 
                 {/* Text Input */}
                 <div className="flex-1 relative">
                   <div className="relative">
                     <Input
-                      value={inputMessage}
+                      value={isListening ? speechText : inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
-                      placeholder="Ask about farming, crops, tools, or agricultural advice..."
-                      className="pr-12 pl-4 rounded-2xl border-0 bg-gradient-to-r from-gray-50 via-white to-gray-50 focus:from-emerald-50 focus:via-white focus:to-emerald-50 shadow-inner focus:shadow-lg h-14 text-base text-gray-800 font-medium placeholder:text-gray-400 transition-all duration-500 ring-2 ring-gray-200/50 focus:ring-emerald-300/60 hover:ring-emerald-200/40"
+                      placeholder={isListening ? "Listening... speak now" : "Ask about farming, crops, tools, or agricultural advice..."}
+                      className="pr-12 pl-4 rounded-2xl border-0 bg-gradient-to-r from-gray-50 via-white to-gray-50 focus:from-pink-50 focus:via-white focus:to-pink-50 shadow-inner focus:shadow-lg h-14 text-base text-gray-800 font-medium placeholder:text-gray-400 transition-all duration-500 ring-2 ring-gray-200/50 focus:ring-pink-300/60 hover:ring-pink-200/40"
                       onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                      disabled={isListening}
                     />
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-400/20 via-transparent to-blue-400/20 opacity-0 hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r transition-opacity duration-300 pointer-events-none ${
+                      isListening 
+                        ? 'from-pink-400/30 via-rose-400/20 to-pink-400/30 opacity-100 animate-pulse' 
+                        : 'from-pink-400/20 via-transparent to-rose-400/20 opacity-0 hover:opacity-100 focus-within:opacity-100'
+                    }`}></div>
                   </div>
                   <Button
                     onClick={handleSendMessage}
                     size="sm"
-                    disabled={!inputMessage.trim()}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full w-8 h-8 p-0 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-emerald-500 hover:to-green-600 transition-all duration-300 hover:scale-110 disabled:opacity-50"
+                    disabled={!inputMessage.trim() || isListening}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full w-8 h-8 p-0 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 transition-all duration-300 hover:scale-110 disabled:opacity-50"
                   >
                     <Send className="h-3 w-3" />
                   </Button>
@@ -511,17 +565,31 @@ const AgricultureAIAssistant = () => {
 
               {/* Recording Indicator */}
               {isRecording && (
-                <div className="mt-3 flex items-center justify-center space-x-2 text-red-500 bg-red-50 rounded-full py-2">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium">🎤 Recording agricultural question... Tap to stop</span>
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <div className="mt-3 flex items-center justify-center space-x-2 text-pink-600 bg-pink-50 rounded-full py-2 px-4">
+                  <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium">
+                    {isListening 
+                      ? '🎤 Listening... Speak your agricultural question' 
+                      : '🎤 Preparing to listen... Please wait'
+                    }
+                  </span>
+                  <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
+              
+              {/* Speech Recognition Feedback */}
+              {isListening && speechText && (
+                <div className="mt-2 p-2 bg-pink-50 border border-pink-200 rounded-lg">
+                  <p className="text-sm text-pink-700">
+                    <span className="font-medium">You said:</span> {speechText}
+                  </p>
                 </div>
               )}
 
               {/* Quick Tips */}
               <div className="mt-2 text-center">
-                <p className="text-xs text-green-600/70">
-                  💡 Try asking: "How to grow tomatoes?" or "Best farming tools for women?"
+                <p className="text-xs text-pink-600/70">
+                  💡 Try asking: "How to grow tomatoes?" or "Best farming tools for women?" | 🎤 Voice supported!
                 </p>
               </div>
             </div>
