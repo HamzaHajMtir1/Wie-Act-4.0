@@ -1,31 +1,31 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { Users, Target, Heart, Award } from "lucide-react"
+import { ShieldCheck, TrendingUp, Cpu, Sprout } from "lucide-react"
 
 export function AboutSection() {
   const features = [
     {
-      icon: Users,
-      title: "Community Building",
+      icon: Sprout,
+      title: "Community Support",
       description:
-        "Creating supportive networks where women engineers can connect, collaborate, and grow together in their careers.",
+        "Building a strong network between farmers and companies to share experiences, solve challenges, and grow together.",
     },
     {
-      icon: Target,
-      title: "Skill Development",
+      icon: Cpu,
+      title: "Smart Assistance",
       description:
-        "Providing targeted training programs, workshops, and resources to help women excel in technical and leadership roles.",
+        "Providing digital tools and real-time guidance to make farming tasks easier, faster, and more efficient.",
     },
     {
-      icon: Heart,
-      title: "Mentorship",
+      icon: ShieldCheck,
+      title: "Safety & Well-being",
       description:
-        "Connecting experienced professionals with emerging talent to foster growth, confidence, and career advancement.",
+        "Ensuring farmers’ safety through continuous monitoring, alerts, and preventive measures to reduce risks during work.",
     },
     {
-      icon: Award,
-      title: "Recognition",
+      icon: TrendingUp,
+      title: "Productivity Boost",
       description:
-        "Celebrating achievements and highlighting the contributions of women in engineering to inspire the next generation.",
+        "Helping companies enhance agricultural performance through data insights, optimized resource use, and better coordination with workers.",
     },
   ]
 
@@ -39,9 +39,9 @@ export function AboutSection() {
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Mission</span>
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty leading-relaxed">
-            We're dedicated to creating an inclusive environment where women in engineering can thrive, innovate, and
-            lead the future of technology. Our comprehensive approach focuses on education, mentorship, and community
-            support.
+            We’re dedicated to transforming agriculture through technology and safety innovation.
+            Our mission is to simplify farmers’ daily work, ensure their well-being, and help companies 
+            improve productivity while promoting sustainable practices.
           </p>
         </div>
 
@@ -70,15 +70,16 @@ export function AboutSection() {
           <div className="max-w-4xl mx-auto text-center">
             <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Our Vision for the Future</h3>
             <p className="text-lg text-muted-foreground text-pretty leading-relaxed mb-6">
-              We envision a world where gender equality in engineering is not just an aspiration, but a reality. Through
-              our initiatives, we're working to eliminate barriers, challenge stereotypes, and create opportunities for
-              women to excel in all areas of engineering.
+              We envision a future where technology empowers every farmer, making agriculture smarter, safer, and more sustainable.
+              By bridging the gap between farmers and agricultural firms, we aim to boost efficiency, protect workers, and drive 
+              innovation for a greener planet.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm font-medium">
               <span className="bg-primary/10 text-primary px-4 py-2 rounded-full">Innovation</span>
-              <span className="bg-accent/10 text-accent px-4 py-2 rounded-full">Equality</span>
-              <span className="bg-primary/10 text-primary px-4 py-2 rounded-full">Empowerment</span>
-              <span className="bg-accent/10 text-accent px-4 py-2 rounded-full">Excellence</span>
+              <span className="bg-accent/10 text-accent px-4 py-2 rounded-full">Collaboration </span>
+              <span className="bg-primary/10 text-primary px-4 py-2 rounded-full">Safety </span>
+              <span className="bg-accent/10 text-accent px-4 py-2 rounded-full">Efficiency </span>
+              <span className="bg-primary/10 text-primary px-4 py-2 rounded-full">Sustainability</span>
             </div>
           </div>
         </div>
