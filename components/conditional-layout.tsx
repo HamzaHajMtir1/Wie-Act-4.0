@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation"
 import { Navbar } from "./navbar"
 import { Footer } from "./footer"
+import AgricultureAIAssistant from "./ai-agent-chat"
 
 export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -14,7 +15,12 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const shouldHideNavAndFooter = isAdminRoute || isFarmRoute || isAuthRoute
 
   if (shouldHideNavAndFooter) {
-    return <>{children}</>
+    return (
+      <>
+        {children}
+        <AgricultureAIAssistant />
+      </>
+    )
   }
 
   return (
@@ -24,6 +30,7 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <Footer />
+      <AgricultureAIAssistant />
     </>
   )
 }
