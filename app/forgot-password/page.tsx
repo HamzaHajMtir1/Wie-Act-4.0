@@ -135,7 +135,7 @@ export default function ForgotPasswordPage() {
 
               <Button
                 type="submit"
-                className="w-full h-14 text-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                className="w-full h-14 text-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
               >
                 <Mail className="mr-2 h-5 w-5" />
                 Send Reset Link
@@ -150,7 +150,7 @@ export default function ForgotPasswordPage() {
               <Link href="/login">
                 <Button 
                   variant="outline" 
-                  className="w-full h-12 border-primary/30 text-primary hover:bg-primary/10 hover:text-white font-medium rounded-lg"
+                  className="w-full h-12 border-primary/30 text-primary cursor-pointer hover:text-white font-medium rounded-lg"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Sign In

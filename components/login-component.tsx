@@ -64,10 +64,10 @@ export default function LoginComponent() {
         <div className="mb-6 flex items-center justify-between">
           <Link 
             href="/"
-            className="inline-flex items-center text-pink-600 hover:text-pink-700 transition-colors font-medium"
+            className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour à l'accueil
+            Back to Home
           </Link>
         </div>
 
@@ -77,11 +77,11 @@ export default function LoginComponent() {
               <LogIn className="h-8 w-8 text-primary-foreground" />
             </div>
             <div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent mb-2">
-                Bienvenue
+              <CardTitle className="text-3xl font-bold text-foreground mb-2">
+                Welcome
               </CardTitle>
-              <p className="text-gray-600">
-                Connectez-vous à votre compte Agri-Hope
+              <p className="text-muted-foreground">
+                Login with your account to get started
               </p>
             </div>
           </CardHeader>
@@ -95,8 +95,8 @@ export default function LoginComponent() {
               )}
 
               <div>
-                <label htmlFor="email" className="block text-base font-medium text-gray-700 mb-3">
-                  Adresse Email
+                <label htmlFor="email" className="block text-base font-medium text-foreground mb-3">
+                  Email Adress
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -108,14 +108,14 @@ export default function LoginComponent() {
                     value={formData.email}
                     onChange={handleChange}
                     className="pl-12 h-14 text-base bg-white border-2 border-gray-200 focus:border-pink-400 focus:ring-pink-300 rounded-lg"
-                    placeholder="Entrez votre email"
+                    placeholder="Enter your password email"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-base font-medium text-gray-700 mb-3">
-                  Mot de passe
+                <label htmlFor="password" className="block text-base font-medium text-foreground mb-3">
+                  Password
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -127,7 +127,7 @@ export default function LoginComponent() {
                     value={formData.password}
                     onChange={handleChange}
                     className="pl-12 pr-12 h-14 text-base bg-white border-2 border-gray-200 focus:border-pink-400 focus:ring-pink-300 rounded-lg"
-                    placeholder="Entrez votre mot de passe"
+                    placeholder="Enter your password"
                   />
                   <button
                     type="button"
@@ -142,17 +142,17 @@ export default function LoginComponent() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-14 text-lg bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+                className="w-full h-14 text-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
               >
                 {isLoading ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span>Connexion...</span>
+                    <span>Loading...</span>
                   </div>
                 ) : (
                   <>
-                    <LogIn className="mr-2 h-5 w-5" />
-                    Se connecter
+                    <LogIn className="mr-2 h-5 w-5 text-black" />
+                    Login
                   </>
                 )}
               </Button>
@@ -161,9 +161,9 @@ export default function LoginComponent() {
             {/* Demo Credentials */}
             <div className="p-4 bg-pink-50 border border-pink-200 rounded-lg">
               <p className="text-xs text-pink-700 text-center mb-3">
-                <strong>Identifiants de démonstration :</strong><br />
+                <strong>Demo credentials :</strong><br />
                 Email : touta@ieee.org<br />
-                Mot de passe : Touta2025
+                Password : Touta2025
               </p>
               <Button
                 type="button"
@@ -175,9 +175,9 @@ export default function LoginComponent() {
                     password: 'Touta2025'
                   })
                 }}
-                className="w-full text-pink-600 border-pink-300 hover:bg-pink-100 text-xs"
+                className="w-full text-pink-600 hover:text-pink-500 border-pink-300 hover:bg-pink-100 text-xs cursor-pointer"
               >
-                Remplir automatiquement
+                Auto fill
               </Button>
             </div>
 
@@ -188,21 +188,21 @@ export default function LoginComponent() {
                   href="/forgot-password"
                   className="text-pink-600 hover:text-pink-700 font-medium underline underline-offset-2"
                 >
-                  Mot de passe oublié ?
+                  Forget Password ?
                 </Link>
               </div>
               
-              <div className="pt-4 border-t border-gray-200">
-                <p className="text-gray-600 mb-2">
-                  Vous n'avez pas de compte ?
+              <div className="pt-4 border-t border-border">
+                <p className="text-muted-foreground mb-2">
+                  Don't have an account?
                 </p>
                 <Link href="/register">
                   <Button 
                     variant="outline"
-                    className="w-full h-12 border-pink-300 text-pink-600 hover:bg-pink-50 hover:border-pink-400 font-medium rounded-lg cursor-pointer"
+                    className="w-full h-12 border-pink-300 text-pink-600 hover:text-pink-500 hover:bg-pink-50 hover:border-pink-400 font-medium rounded-lg cursor-pointer"
                   >
                     <UserPlus className="mr-2 h-4 w-4" />
-                    Créer un compte
+                    Create Account
                   </Button>
                 </Link>
               </div>

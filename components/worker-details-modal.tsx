@@ -19,7 +19,8 @@ import {
   Calendar,
   Navigation,
   Activity,
-  X
+  X,
+  Heart
 } from "lucide-react"
 import type { Worker } from "@/lib/worker-data"
 
@@ -145,6 +146,90 @@ export function WorkerDetailsModal({ worker, isOpen, onClose }: WorkerDetailsMod
             </div>
           </div>
 
+          <Separator />
+
+          {/* Health Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Heart className="h-5 w-5" />
+              Health Status
+            </h3>
+            
+            {worker.health ? (
+              <div className="space-y-3">
+                {/* Health Status */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Health Status</label>
+                    <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
+                      <div className={`h-3 w-3 rounded-full ${
+                        worker.health.hasIllness ? "bg-yellow-500" : "bg-green-500"
+                      }`} />
+                      <span>{worker.health.hasIllness ? "Has Health Condition" : "Healthy"}</span>
+                    </div>
+                  </div>
+                  
+                  {worker.health.lastCheckup && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-muted-foreground">Last Checkup</label>
+                      <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span>{new Date(worker.health.lastCheckup).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Illness Information */}
+                {worker.health.hasIllness && worker.health.illness && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Current Condition</label>
+                    <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                      <div className="flex items-start gap-2">
+                        <div className="h-2 w-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="font-medium text-yellow-800 dark:text-yellow-200">{worker.health.illness}</p>
+                          {worker.health.notes && (
+                            <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">{worker.health.notes}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Medications */}
+                {worker.health.medications && worker.health.medications.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Current Medications</label>
+                    <div className="space-y-2">
+                      {worker.health.medications.map((medication, index) => (
+                        <div key={index} className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                          <div className="h-2 w-2 bg-blue-500 rounded-full" />
+                          <span className="text-sm text-blue-800 dark:text-blue-200">{medication}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Health Notes for Healthy Workers */}
+                {!worker.health.hasIllness && worker.health.notes && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Health Notes</label>
+                    <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                      <p className="text-sm text-green-800 dark:text-green-200">{worker.health.notes}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-4 bg-muted/30 rounded-lg">
+                <p className="text-sm text-muted-foreground">No health information available for this worker.</p>
+              </div>
+            )}
+          </div>
+
           {/* GPS Coordinates */}
           {worker.coordinates && (
             <>
@@ -227,3 +312,4 @@ export function WorkerDetailsModal({ worker, isOpen, onClose }: WorkerDetailsMod
     </Dialog>
   )
 }
+

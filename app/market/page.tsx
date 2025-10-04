@@ -160,17 +160,6 @@ function MarketContent() {
 
             {/* Filters & Sort */}
             <div className="flex items-center gap-4">
-              <label className="flex items-center space-x-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={organicOnly}
-                  onChange={(e) => setOrganicOnly(e.target.checked)}
-                  className="rounded border-primary/30 text-primary focus:ring-primary"
-                />
-                <span>Organic Only</span>
-                <Leaf className="h-4 w-4 text-primary" />
-              </label>
-
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
