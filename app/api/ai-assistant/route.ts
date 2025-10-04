@@ -26,83 +26,121 @@ const STATIC_TEST_ARTICLE = {
 };
 
 const AGRICULTURAL_SYSTEM_PROMPT = `
-You are Touta, an AI assistant specifically designed to help women in agriculture. Your expertise includes:
+You are Touta, an AI assistant specifically designed to help women in agriculture. You have two main roles:
 
-1. Agricultural tools and equipment recommendations
-2. Crop growing guidance (planting, care, harvesting)
-3. Sustainable farming practices
-4. Seasonal farming advice
-5. Pest and disease management
-6. Soil health and fertilization
-7. Product recommendations from the agricultural marketplace
+🌱 ADVICE MODE: When users ask for farming guidance, tips, or general agricultural knowledge
+🛒 PRODUCT MODE: When users specifically ask for tools, equipment, or products to buy
 
-IMPORTANT GUIDELINES:
-- ONLY respond to agriculture-related queries
-- If asked about non-agricultural topics, politely redirect: "I'm Touta, specialized in agricultural assistance for women farmers. Please ask me about farming, crops, tools, or agricultural practices."
-- Provide practical, actionable advice
-- Be encouraging and supportive
-- Keep responses concise but informative
-- When users ask for tools or products, I can search our marketplace and provide specific recommendations
-- If a user asks "I need tools for growing potatoes" or similar, I can fetch relevant products from our database
+Your expertise includes:
+1. Crop growing guidance (planting, care, harvesting techniques)
+2. Sustainable farming practices and methods
+3. Seasonal farming advice and timing
+4. Pest and disease management solutions
+5. Soil health, fertilization, and nutrition
+6. Agricultural tools and equipment recommendations (when specifically requested)
 
-If the user asks about tools or equipment, search the provided articles database and marketplace products and recommend relevant items.
+IMPORTANT BEHAVIORAL RULES:
+
+📝 ADVICE QUERIES - When users ask "how to", "tips for", "best way to", "when to", "why", or seek general guidance:
+- Provide detailed agricultural advice and step-by-step guidance
+- Share farming techniques, best practices, and expert knowledge
+- Focus on methods, timing, techniques, and agricultural science
+- Do NOT mention products unless specifically asked
+- Be educational and informative about the farming process
+
+🛍️ PRODUCT QUERIES - When users explicitly ask for "tools", "equipment", "what to buy", "recommend tool", or "need to purchase":
+- Search the marketplace and recommend ONLY relevant products
+- Provide specific product recommendations with prices and descriptions
+- Focus on tools and equipment that directly solve their need
+- Include product details from the marketplace data
+
+⚠️ CRITICAL ACCURACY RULES:
+- NEVER mix advice and product recommendations unless both are requested
+- For olive cultivation advice: Focus on pruning techniques, planting methods, care practices
+- For olive cultivation products: Only recommend pruning shears, soil tests, tree planting tools
+- Match products precisely to the crop and need mentioned
+- If no relevant products exist, say so instead of recommending irrelevant items
+
+Response based on query type detected by the system.
 `;
 
-// Enhanced helper function to detect product queries using AI decision matrix
-function detectProductQuery(message: string): { isProductQuery: boolean; searchTerms: string; category?: string } {
+// Enhanced query classification to distinguish between advice and product requests
+function classifyQuery(message: string): { 
+  queryType: 'advice' | 'product' | 'general';
+  confidence: number;
+  searchTerms: string;
+  category?: string;
+  crop?: string;
+} {
   const lowerMessage = message.toLowerCase();
   const decisionMatrix = productsDatabase.ai_decision_matrix;
   
-  // Check against all keyword patterns
-  let isProductQuery = false;
-  let detectedCategory = '';
-  let searchTerms = message;
+  // Product-seeking keywords (high confidence indicators)
+  const explicitProductKeywords = [
+    'tool', 'tools', 'equipment', 'buy', 'purchase', 'need to buy',
+    'recommend tool', 'what tool', 'which tool', 'best tool',
+    'show me tool', 'find tool', 'looking for tool', 'where to get',
+    'i need a', 'help me find', 'shopping for', 'market',
+    'price', 'cost', 'sell', 'available for sale'
+  ];
   
-  // Check each category of keywords
-  for (const [category, keywords] of Object.entries(decisionMatrix.query_patterns)) {
-    if (keywords.some(keyword => lowerMessage.includes(keyword.toLowerCase()))) {
-      isProductQuery = true;
-      detectedCategory = category.replace('_keywords', '');
-      break;
-    }
+  // Advice-seeking keywords (high confidence indicators)
+  const explicitAdviceKeywords = [
+    'how to', 'how do i', 'what should i do', 'tips for', 'advice',
+    'help me grow', 'growing tips', 'best way to', 'when to',
+    'how can i', 'what is the best method', 'guide', 'steps to',
+    'can you explain', 'teach me', 'learn about', 'understand',
+    'why', 'what causes', 'problem with', 'disease', 'pest'
+  ];
+  
+  let queryType: 'advice' | 'product' | 'general' = 'general';
+  let confidence = 0;
+  let detectedCategory = '';
+  let detectedCrop = '';
+  
+  // Check for explicit product requests (highest priority)
+  const productMatches = explicitProductKeywords.filter(keyword => 
+    lowerMessage.includes(keyword)
+  );
+  
+  // Check for explicit advice requests
+  const adviceMatches = explicitAdviceKeywords.filter(keyword => 
+    lowerMessage.includes(keyword)
+  );
+  
+  if (productMatches.length > 0) {
+    queryType = 'product';
+    confidence = Math.min(0.9, 0.3 + (productMatches.length * 0.2));
+  } else if (adviceMatches.length > 0) {
+    queryType = 'advice';
+    confidence = Math.min(0.9, 0.3 + (adviceMatches.length * 0.2));
   }
   
-  // Also check for crop-specific queries
+  // Detect crop/plant type
   for (const [crop, _] of Object.entries(decisionMatrix.crop_specific)) {
     if (lowerMessage.includes(crop.toLowerCase())) {
-      isProductQuery = true;
-      searchTerms = crop;
+      detectedCrop = crop;
       break;
     }
   }
   
-  // Fallback patterns for general product queries
-  const productPatterns = [
-    /i need.*tool/i,
-    /what.*tool/i,
-    /need.*for.*growing/i,
-    /tool.*for/i,
-    /equipment.*for/i,
-    /recommend.*tool/i,
-    /best.*tool/i,
-    /show.*tool/i,
-    /find.*tool/i,
-    /buy.*tool/i,
-    /purchase.*tool/i,
-    /where.*get/i,
-    /need.*equipment/i,
-    /help.*find/i,
-    /looking.*for/i
-  ];
-
-  if (!isProductQuery) {
-    isProductQuery = productPatterns.some(pattern => pattern.test(message));
+  // Additional context clues
+  if (lowerMessage.includes('growing') && !lowerMessage.includes('tool')) {
+    queryType = 'advice';
+    confidence = Math.max(confidence, 0.7);
+  }
+  
+  if (lowerMessage.includes('fertilizer') || lowerMessage.includes('seed')) {
+    queryType = 'product';
+    confidence = Math.max(confidence, 0.8);
   }
   
   return {
-    isProductQuery,
-    searchTerms: isProductQuery ? searchTerms : '',
-    category: detectedCategory
+    queryType,
+    confidence,
+    searchTerms: detectedCrop || message,
+    category: detectedCategory,
+    crop: detectedCrop
   };
 }
 
@@ -114,43 +152,77 @@ function intelligentProductSearch(query: string, category?: string): Product[] {
   
   let relevantProducts: any[] = [];
   
-  // First, try crop-specific matching
+  console.log(`🔍 Starting product search for: "${query}"`);
+  
+  // First, try crop-specific matching with higher accuracy - only for direct crop mentions
   for (const [crop, productNames] of Object.entries(decisionMatrix.crop_specific)) {
     if (lowerQuery.includes(crop)) {
       const cropProducts = products.filter(p => 
-        productNames.some(name => p.name.includes(name))
+        productNames.some(name => p.name.toLowerCase().includes(name.toLowerCase()))
       );
-      relevantProducts.push(...cropProducts);
+      if (cropProducts.length > 0) {
+        relevantProducts.push(...cropProducts);
+        console.log(`🎯 Found ${cropProducts.length} products for crop: ${crop}`);
+        // Return only highly relevant crop-specific products
+        return convertToProductType(relevantProducts.slice(0, 3));
+      }
     }
   }
   
-  // If no crop-specific match, use category-based search
-  if (relevantProducts.length === 0 && category) {
-    const categoryKey = `${category}_keywords` as keyof typeof decisionMatrix.query_patterns;
-    const categoryKeywords = decisionMatrix.query_patterns[categoryKey] || [];
-    relevantProducts = products.filter(product => 
-      categoryKeywords.some((keyword: string) => 
-        product.name.toLowerCase().includes(keyword) ||
-        product.tags.some(tag => tag.toLowerCase().includes(keyword)) ||
-        product.aiKeywords.some(aiKeyword => aiKeyword.toLowerCase().includes(keyword))
-      )
-    );
+  // Second, check for specific tool/equipment keywords only if they're explicitly mentioned
+  const toolKeywords = ['tool', 'equipment', 'shear', 'hoe', 'spade', 'fertilizer', 'seed', 'kit'];
+  const hasToolKeyword = toolKeywords.some(keyword => lowerQuery.includes(keyword));
+  
+  if (hasToolKeyword) {
+    // Look for products that match the tool type and crop context
+    if (lowerQuery.includes('olive') || lowerQuery.includes('olives')) {
+      relevantProducts = products.filter(product => 
+        product.aiKeywords.some(keyword => 
+          ['olive', 'tree care', 'pruning', 'orchard', 'Mediterranean', 'tree planting'].includes(keyword.toLowerCase())
+        ) ||
+        product.crops.some(crop => 
+          ['olives', 'fruit trees', 'Mediterranean crops'].includes(crop.toLowerCase())
+        )
+      );
+      console.log(`🫒 Found ${relevantProducts.length} olive-specific products`);
+    } else {
+      // General tool search but be very selective
+      relevantProducts = products.filter(product => 
+        product.name.toLowerCase().includes(lowerQuery) ||
+        product.aiKeywords.some(keyword => keyword.toLowerCase().includes(lowerQuery)) ||
+        (product.tags && product.tags.some(tag => tag.toLowerCase().includes(lowerQuery)))
+      );
+    }
   }
   
-  // Fallback to general search if no specific matches
-  if (relevantProducts.length === 0) {
-    relevantProducts = products.filter(product => 
-      product.name.toLowerCase().includes(lowerQuery) ||
-      product.description.toLowerCase().includes(lowerQuery) ||
-      product.tags.some(tag => tag.toLowerCase().includes(lowerQuery)) ||
-      product.aiKeywords.some(keyword => keyword.toLowerCase().includes(lowerQuery)) ||
-      product.useCases.some(useCase => useCase.toLowerCase().includes(lowerQuery))
-    );
+  // Third, use case mapping only for very specific scenarios
+  if (relevantProducts.length === 0 && hasToolKeyword) {
+    for (const [useCase, productNames] of Object.entries(decisionMatrix.use_case_mapping)) {
+      if (lowerQuery.includes(useCase.replace('_', ' '))) {
+        const useCaseProducts = products.filter(p => 
+          productNames.some(name => p.name.toLowerCase().includes(name.toLowerCase()))
+        );
+        relevantProducts.push(...useCaseProducts);
+      }
+    }
   }
   
-  // Convert to Product format and limit results
-  return relevantProducts.slice(0, 8).map(p => ({
-    id: p.id,
+  // Remove duplicates and sort by relevance
+  const uniqueProducts = relevantProducts.filter((product, index, self) => 
+    index === self.findIndex(p => p.id === product.id)
+  );
+  
+  // Be very conservative with results - only return highly relevant matches
+  const finalResults = uniqueProducts.slice(0, 3);
+  console.log(`✅ Returning ${finalResults.length} highly relevant products`);
+  
+  return convertToProductType(finalResults);
+}
+
+// Convert enhanced products to the standard Product type
+function convertToProductType(products: any[]): Product[] {
+  return products.map(p => ({
+    id: p.id.toString(),
     name: p.name,
     category: p.category,
     price: p.price,
@@ -215,8 +287,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if this is a product query
-    const productQuery = detectProductQuery(message);
+    // Classify the query type (advice vs product request)
+    const queryClassification = classifyQuery(message);
+    console.log(`🎯 Query classified as: ${queryClassification.queryType} (confidence: ${queryClassification.confidence})`);
     
     // Get articles data (static for testing, live for production)
     let articles;
@@ -233,11 +306,11 @@ export async function POST(request: Request) {
       }
     }
 
-    // If it's a product query, search for relevant products using enhanced search
+    // Only search for products if this is explicitly a product query
     let relevantProducts: Product[] = [];
-    if (productQuery.isProductQuery) {
-      relevantProducts = intelligentProductSearch(productQuery.searchTerms, productQuery.category);
-      console.log(`🛍️ Found ${relevantProducts.length} relevant products for query: "${productQuery.searchTerms}" (category: ${productQuery.category})`);
+    if (queryClassification.queryType === 'product' && queryClassification.confidence > 0.6) {
+      relevantProducts = intelligentProductSearch(queryClassification.searchTerms, queryClassification.category);
+      console.log(`🛍️ Found ${relevantProducts.length} relevant products for query: "${queryClassification.searchTerms}"`);
     }
 
     // Prepare context for AI
@@ -285,6 +358,40 @@ export async function POST(request: Request) {
       try {
         console.log(`🤖 Trying model: ${model}`);
         
+        // Build context-aware prompt based on query type
+        let contextualPrompt = AGRICULTURAL_SYSTEM_PROMPT;
+        
+        if (queryClassification.queryType === 'advice') {
+          contextualPrompt += `
+
+🌱 ADVICE MODE ACTIVATED:
+The user is seeking agricultural guidance and farming knowledge. Provide detailed farming advice, techniques, and educational information. Do NOT mention products or tools unless specifically asked. Focus on:
+- Step-by-step farming techniques
+- Best practices and timing
+- Agricultural science and methods
+- Problem-solving approaches
+
+Available Agricultural Knowledge Base:
+${articlesContext}`;
+        } else if (queryClassification.queryType === 'product') {
+          contextualPrompt += `
+
+🛒 PRODUCT MODE ACTIVATED:
+The user is looking for specific tools or products to purchase. Recommend ONLY relevant products from the marketplace that directly match their needs.
+
+Available Agricultural Articles:
+${articlesContext}${productContext}
+
+Focus on providing specific product recommendations with prices and descriptions.`;
+        } else {
+          contextualPrompt += `
+
+General agricultural assistance mode. Determine if the user needs advice or product recommendations based on their question.
+
+Available Resources:
+${articlesContext}${productContext}`;
+        }
+        
         // Call OpenRouter API
         const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
@@ -298,7 +405,7 @@ export async function POST(request: Request) {
             messages: [
               {
                 role: 'system',
-                content: `${AGRICULTURAL_SYSTEM_PROMPT}\n\nAvailable Agricultural Tools and Articles:\n${articlesContext}${productContext}`
+                content: contextualPrompt
               },
               {
                 role: 'user',
@@ -343,7 +450,8 @@ export async function POST(request: Request) {
         modelUsed: modelUsed,
         hasProducts: relevantProducts.length > 0,
         products: relevantProducts.slice(0, 10), // Return top 10 products
-        isProductQuery: productQuery.isProductQuery
+        queryType: queryClassification.queryType,
+        confidence: queryClassification.confidence
       });
     }
 
@@ -358,7 +466,8 @@ export async function POST(request: Request) {
       modelUsed: 'fallback',
       hasProducts: relevantProducts.length > 0,
       products: relevantProducts.slice(0, 10),
-      isProductQuery: productQuery.isProductQuery
+      queryType: queryClassification.queryType,
+      confidence: queryClassification.confidence
     });
 
   } catch (error) {

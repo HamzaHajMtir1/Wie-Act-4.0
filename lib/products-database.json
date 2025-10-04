@@ -316,6 +316,91 @@
       "benefits": ["Multiple varieties", "Organic grown", "Fresh picked", "Local sourced"],
       "crops": ["apples"],
       "aiKeywords": ["fruits", "apples", "fresh", "organic", "variety", "seasonal"]
+    },
+    {
+      "id": 17,
+      "name": "Professional Pruning Shears",
+      "category": "Tools",
+      "subcategory": "Tree Care",
+      "price": 45.99,
+      "originalPrice": 59.99,
+      "seller": "Orchard Pro Tools",
+      "location": "California, USA",
+      "image": "✂️",
+      "organic": false,
+      "quantity": "Heavy-duty steel",
+      "inStock": true,
+      "featured": true,
+      "tags": ["pruning", "shears", "tree care", "orchard", "fruit trees", "olive"],
+      "description": "Professional-grade pruning shears for fruit trees and olive groves",
+      "detailedDescription": "Heavy-duty steel pruning shears designed for cutting branches up to 1 inch diameter. Perfect for olive trees, citrus, and other fruit trees. Ergonomic handles reduce hand fatigue.",
+      "useCases": ["olive tree pruning", "fruit tree maintenance", "branch cutting", "orchard work"],
+      "benefits": ["Sharp cutting blade", "Ergonomic design", "Durable construction", "Professional quality"],
+      "crops": ["olives", "citrus", "fruit trees", "vines"],
+      "aiKeywords": ["pruning", "tree care", "olive", "fruit trees", "cutting", "orchard", "maintenance"]
+    },
+    {
+      "id": 18,
+      "name": "Soil pH Test Kit",
+      "category": "Equipment",
+      "subcategory": "Soil Testing",
+      "price": 19.99,
+      "seller": "Farm Science Labs",
+      "location": "Colorado, USA",
+      "image": "🧪",
+      "organic": false,
+      "quantity": "50 tests included",
+      "inStock": true,
+      "featured": true,
+      "tags": ["soil test", "pH", "testing", "olive soil", "alkaline"],
+      "description": "Professional soil pH testing kit for optimal olive growing conditions",
+      "detailedDescription": "Accurate soil pH testing kit that helps determine if your soil is suitable for olive cultivation. Olives prefer slightly alkaline soil (pH 6.5-8.5). Easy-to-use strips provide instant results.",
+      "useCases": ["olive soil preparation", "soil testing", "pH monitoring", "growing conditions"],
+      "benefits": ["Accurate readings", "Easy to use", "Quick results", "50 tests included"],
+      "crops": ["olives", "fruit trees", "Mediterranean crops", "alkaline-loving plants"],
+      "aiKeywords": ["soil test", "pH", "olive growing", "alkaline soil", "testing", "soil preparation"]
+    },
+    {
+      "id": 19,
+      "name": "Tree Planting Auger",
+      "category": "Tools",
+      "subcategory": "Planting Tools",
+      "price": 79.99,
+      "seller": "Orchard Equipment Co",
+      "location": "Texas, USA",
+      "image": "🌳",
+      "organic": false,
+      "quantity": "3-inch diameter",
+      "inStock": true,
+      "featured": true,
+      "tags": ["tree planting", "auger", "olive trees", "hole digging", "orchard"],
+      "description": "Heavy-duty tree planting auger for olive trees and fruit orchards",
+      "detailedDescription": "Professional tree planting auger that creates perfect holes for olive tree planting. 3-inch diameter is ideal for young olive trees. Reduces planting time and ensures proper root spacing.",
+      "useCases": ["olive tree planting", "orchard establishment", "tree spacing", "hole digging"],
+      "benefits": ["Perfect hole size", "Saves time", "Consistent depth", "Professional results"],
+      "crops": ["olives", "fruit trees", "nut trees", "ornamental trees"],
+      "aiKeywords": ["tree planting", "olive planting", "auger", "hole digging", "orchard", "tree spacing"]
+    },
+    {
+      "id": 20,
+      "name": "Mediterranean Tree Fertilizer",
+      "category": "Fertilizers",
+      "subcategory": "Tree Nutrition",
+      "price": 24.99,
+      "seller": "Grove Nutrition",
+      "location": "Spain Import",
+      "image": "🌿",
+      "organic": true,
+      "quantity": "5lb bag",
+      "inStock": true,
+      "featured": true,
+      "tags": ["olive fertilizer", "tree nutrition", "Mediterranean", "organic"],
+      "description": "Specialized organic fertilizer formulated for olive trees and Mediterranean crops",
+      "detailedDescription": "This organic fertilizer blend is specifically formulated for olive trees and other Mediterranean crops. Contains balanced nutrients including potassium and phosphorus essential for olive production.",
+      "useCases": ["olive tree feeding", "fruit tree nutrition", "Mediterranean gardening", "organic orchards"],
+      "benefits": ["Olive-specific formula", "Organic certified", "Balanced nutrition", "Improves fruit quality"],
+      "crops": ["olives", "citrus", "Mediterranean herbs", "fruit trees"],
+      "aiKeywords": ["olive fertilizer", "tree nutrition", "Mediterranean", "organic fertilizer", "olive feeding"]
     }
   ],
   "ai_decision_matrix": {
@@ -325,20 +410,27 @@
       "fertilizer_keywords": ["fertilizer", "nutrients", "compost", "soil amendment", "organic fertilizer", "feed"],
       "pest_control_keywords": ["pest", "insects", "spray", "control", "organic pesticide", "neem"],
       "irrigation_keywords": ["water", "irrigation", "watering", "drip", "sprinkler", "water system"],
-      "produce_keywords": ["fresh", "vegetables", "fruits", "organic produce", "harvest", "seasonal"]
+      "produce_keywords": ["fresh", "vegetables", "fruits", "organic produce", "harvest", "seasonal"],
+      "tree_care_keywords": ["pruning", "tree care", "orchard", "fruit trees", "tree planting", "tree maintenance"]
     },
     "crop_specific": {
       "potato": ["Professional Garden Hoe", "Potato Planting Shovel", "Organic Compost"],
       "tomato": ["Organic Tomato Seeds", "Drip Irrigation Kit", "Liquid Fish Fertilizer", "Neem Oil Spray"],
       "vegetables": ["Lettuce Mix Seeds", "Premium Potting Soil", "Organic Compost", "Fresh Organic Carrots", "Fresh Organic Spinach", "Organic Bell Pepper Mix", "Fresh Organic Broccoli"],
-      "herbs": ["Herb Garden Starter Kit", "Premium Potting Soil", "Liquid Fish Fertilizer"]
+      "herbs": ["Herb Garden Starter Kit", "Premium Potting Soil", "Liquid Fish Fertilizer"],
+      "olive": ["Professional Pruning Shears", "Soil pH Test Kit", "Tree Planting Auger", "Mediterranean Tree Fertilizer"],
+      "olives": ["Professional Pruning Shears", "Soil pH Test Kit", "Tree Planting Auger", "Mediterranean Tree Fertilizer"],
+      "fruit trees": ["Professional Pruning Shears", "Tree Planting Auger", "Mediterranean Tree Fertilizer", "Drip Irrigation Kit"],
+      "orchard": ["Professional Pruning Shears", "Tree Planting Auger", "Mediterranean Tree Fertilizer", "Soil pH Test Kit"]
     },
     "use_case_mapping": {
       "beginner_gardening": ["Herb Garden Starter Kit", "Premium Potting Soil", "Organic Compost"],
       "organic_farming": ["Organic Tomato Seeds", "Organic Compost", "Neem Oil Spray"],
       "water_efficiency": ["Drip Irrigation Kit"],
       "pest_management": ["Neem Oil Spray"],
-      "soil_improvement": ["Organic Compost", "Premium Potting Soil", "Liquid Fish Fertilizer"]
+      "soil_improvement": ["Organic Compost", "Premium Potting Soil", "Liquid Fish Fertilizer"],
+      "tree_cultivation": ["Professional Pruning Shears", "Tree Planting Auger", "Mediterranean Tree Fertilizer", "Soil pH Test Kit"],
+      "olive_growing": ["Professional Pruning Shears", "Soil pH Test Kit", "Tree Planting Auger", "Mediterranean Tree Fertilizer"]
     }
   }
 }
