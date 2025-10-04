@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Linkedin, Github, Twitter, Star, Award, Code, Users, Heart, Sparkles, Crown, Zap, ChevronRight } from "lucide-react"
+import { Linkedin, Github, Star, Award, Code, Users, ChevronRight, Settings, Earth } from "lucide-react"
 
 export function TeamSection() {
   const [hoveredMember, setHoveredMember] = useState<number | null>(null)
@@ -10,17 +10,8 @@ export function TeamSection() {
 
   const teamMembers = [
     {
-      name: "Dorra Barbria",
-      role: "Chairwomen of IEEEWIE ISIMM SB",
-      image: "/team/dorra.jpg",
-      gradient: "from-pink-400 to-purple-500",
-      socials: { linkedin: "#", github: "#" },
-      icon: Crown,
-      color: "bg-pink-500"
-    },
-    {
       name: "Maryem Teborbi",
-      role: "Secretary of IEEE WIE ISIMM SB",
+      role: "Speaker",
       image: "/team/mariem.jpg",
       gradient: "from-purple-400 to-pink-500",
       socials: { linkedin: "#", github: "#" },
@@ -28,18 +19,8 @@ export function TeamSection() {
       color: "bg-purple-500"
     },
     {
-      name: "Menyar",
-      role: " of IEEE WIE ISIMM SB",
-      image: "/team/menyar.jpg",
-      gradient: "from-purple-400 to-pink-500",
-      socials: { linkedin: "#", github: "#" },
-      icon: Users,
-      color: "bg-purple-500"
-    },
-
-        {
-      name: "Chifa",
-      role: " of IEEE WIE ISIMM SB",
+      name: "Chifa Guesmy",
+      role: "Speaker",
       image: "/team/chifa.jpg",
       gradient: "from-purple-400 to-pink-500",
       socials: { linkedin: "#", github: "#"},
@@ -47,8 +28,8 @@ export function TeamSection() {
       color: "bg-purple-500"
     },
         {
-      name: "Malek",
-      role: "Webmaster of IEEE WIE ISIMM SB",
+      name: "Malek Arfaoui",
+      role: "Speaker",
       image: "/team/malek.jpg",
       gradient: "from-purple-400 to-pink-500",
       socials: { linkedin: "#", github: "#"},
@@ -57,7 +38,7 @@ export function TeamSection() {
     },
     {
       name: "Hamza Haj Mtir",
-      role: "Webmaster at IEEE IAS/PES ISIMM SBJC",
+      role: "Developer team",
       image: "/team/hamza.jpg",
       gradient: "from-cyan-400 to-blue-500",
       socials: { linkedin: "#", github: "#"},
@@ -66,7 +47,7 @@ export function TeamSection() {
     },
     {
       name: "Iheb Elazheri",
-      role: "Chairman of IEEE ITEAM SB",
+      role: "Developer team",
       image: "/team/iheb.jpg",
       gradient: "from-emerald-400 to-teal-500",
       socials: { linkedin: "#", github: "#"},
@@ -78,31 +59,31 @@ export function TeamSection() {
   const achievements = [
     { 
       icon: Star, 
-      number: "1000+", 
-      label: "Women Mentored",
+      number: "1500+", 
+      label: "Farmers Supported",
       color: "text-yellow-500",
       bgColor: "bg-yellow-500/10"
     },
     { 
-      icon: Award, 
-      number: "15+", 
-      label: "Industry Awards",
+      icon: Users, 
+      number: "1000+", 
+      label: "Farms Using Our System",
+      color: "text-pink-500",
+      bgColor: "bg-pink-500/10"
+    },
+    { 
+      icon: Settings, 
+      number: "250+", 
+      label: "Safety Alerts Prevented Accidents",
       color: "text-purple-500",
       bgColor: "bg-purple-500/10"
     },
     { 
-      icon: Code, 
-      number: "500K+", 
-      label: "Lines of Code",
+      icon: Earth, 
+      number: "40+", 
+      label: "Partner Companies",
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"
-    },
-    { 
-      icon: Users, 
-      number: "50+", 
-      label: "Partner Companies",
-      color: "text-pink-500",
-      bgColor: "bg-pink-500/10"
     }
   ]
 
@@ -120,8 +101,8 @@ export function TeamSection() {
             Our <span className="text-primary">Team</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Meet the dedicated women leading innovation in engineering and technology, 
-            committed to empowering others and creating positive change.
+            Meet the passionate minds behind our smart agriculture solution — a group of engineers, agronomists, and innovators 
+            dedicated to improving farmers’ lives.
           </p>
         </div>
 
@@ -211,12 +192,11 @@ export function TeamSection() {
         {activeTab === "impact" && (
           <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-3xl p-8 md:p-12 backdrop-blur-sm border border-primary/20">
             <div className="text-center mb-12">
-              <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
+              <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-6 cursor-pointer">
                 Our <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Impact</span>
               </h3>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                These numbers represent real lives changed, barriers broken, and futures brightened through our collective efforts.
-              </p>
+                Every number tells a story of progress — safer working conditions, simplified tasks, and improved productivity across the agricultural field.              </p>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -258,9 +238,13 @@ export function TeamSection() {
                 Ready to Join Our Mission?
               </h3>
               <p className="text-lg md:text-xl opacity-90 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Be part of a community that's reshaping the future of engineering. Together, we can achieve anything.
+                Be part of a community that’s transforming agriculture through technology, safety, and innovation.
+                Together, we can build a smarter, safer, and more sustainable future for farmers and agricultural companies alike.
               </p>
-              <button className="group bg-white text-primary px-8 py-4 rounded-full font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2">
+              <button 
+                onClick={() => window.location.href = '/login'}
+                className="group bg-white text-primary px-8 py-4 rounded-full font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2 cursor-pointer"
+              >
                 <span className="flex items-center justify-center">
                   Get Involved Today
                   <ChevronRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />

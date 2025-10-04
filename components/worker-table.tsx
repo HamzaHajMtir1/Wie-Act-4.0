@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { WorkerDetailsModal } from "@/components/worker-details-modal"
 import { Search, Phone, MapPin, Clock } from "lucide-react"
 import type { Worker } from "@/lib/worker-data"
 import { cn } from "@/lib/utils"
@@ -15,6 +16,18 @@ interface WorkerTableProps {
 
 export function WorkerTable({ workers }: WorkerTableProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleViewDetails = (worker: Worker) => {
+    setSelectedWorker(worker)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedWorker(null)
+  }
 
   const filteredWorkers = workers.filter(
     (worker) =>
@@ -77,16 +90,22 @@ export function WorkerTable({ workers }: WorkerTableProps) {
               </div>
 
               <div className="flex gap-2 sm:flex-col">
-                <Button variant="outline" size="sm" className="flex-1 sm:flex-none bg-transparent">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 sm:flex-none bg-transparent hover:text-white cursor-pointer"
+                  onClick={() => handleViewDetails(worker)}
+                >
                   View Details
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "flex-1 sm:flex-none",
-                    worker.status === "active" ? "text-primary hover:text-primary" : "text-muted-foreground",
+                    "flex-1 sm:flex-none hover:text-white hover:bg-primary cursor-pointer transition-colors",
+                    worker.status === "active" ? "text-primary" : "text-muted-foreground",
                   )}
+                  onClick={() => window.location.href = `/admin/gps?worker=${worker.id}`}
                 >
                   Track GPS
                 </Button>
@@ -101,6 +120,12 @@ export function WorkerTable({ workers }: WorkerTableProps) {
           )}
         </div>
       </CardContent>
+
+      <WorkerDetailsModal
+        worker={selectedWorker}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </Card>
   )
 }

@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft, UserPlus, Shield } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft, UserPlus } from "lucide-react"
 
 export default function LoginComponent() {
   const [showPassword, setShowPassword] = useState(false)
@@ -52,10 +53,15 @@ export default function LoginComponent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background to-primary/5 flex items-center justify-center p-4">
+      {/* Theme Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+
       <div className="w-full max-w-md mt-20">
         {/* Back to Home */}
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <Link 
             href="/"
             className="inline-flex items-center text-pink-600 hover:text-pink-700 transition-colors font-medium"
@@ -65,10 +71,10 @@ export default function LoginComponent() {
           </Link>
         </div>
 
-        <Card className="border border-pink-200 shadow-2xl bg-white/90 backdrop-blur-xl">
+        <Card className="border border-border shadow-2xl bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center shadow-lg">
-              <Shield className="h-8 w-8 text-white" />
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center shadow-lg">
+              <LogIn className="h-8 w-8 text-primary-foreground" />
             </div>
             <div>
               <CardTitle className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent mb-2">

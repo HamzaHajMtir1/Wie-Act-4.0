@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react"
 
 export default function ForgotPasswordPage() {
@@ -21,8 +22,13 @@ export default function ForgotPasswordPage() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-primary/5 flex items-center justify-center p-4">
+        {/* Theme Toggle */}
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
+
         <div className="w-full max-w-md">
-          <Card className="border border-border shadow-2xl">
+          <Card className="border border-border shadow-2xl bg-card/80 backdrop-blur-sm">
             <CardHeader className="text-center space-y-4">
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
                 <CheckCircle className="h-8 w-8 text-white" />
@@ -53,7 +59,7 @@ export default function ForgotPasswordPage() {
 
               <div className="space-y-3">
                 <Link href="/login">
-                  <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg">
+                  <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground hover:text-white font-medium rounded-lg">
                     Back to Sign In
                   </Button>
                 </Link>
@@ -67,10 +73,6 @@ export default function ForgotPasswordPage() {
             </CardContent>
           </Card>
 
-          {/* Footer */}
-          <div className="mt-8 text-center text-sm text-muted-foreground">
-            <p>© 2025 IEEE WIE. All rights reserved.</p>
-          </div>
         </div>
       </div>
     )
@@ -78,6 +80,11 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-primary/5 flex items-center justify-center p-4">
+      {/* Theme Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+
       <div className="w-full max-w-md">
         {/* Back to Login */}
         <div className="mb-6">
@@ -90,7 +97,7 @@ export default function ForgotPasswordPage() {
           </Link>
         </div>
 
-        <Card className="border border-border shadow-2xl">
+        <Card className="border border-border shadow-2xl bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center space-y-4">
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
               <Mail className="h-8 w-8 text-primary-foreground" />
@@ -143,7 +150,7 @@ export default function ForgotPasswordPage() {
               <Link href="/login">
                 <Button 
                   variant="outline" 
-                  className="w-full h-12 border-primary/30 text-primary hover:bg-primary/10 font-medium rounded-lg"
+                  className="w-full h-12 border-primary/30 text-primary hover:bg-primary/10 hover:text-white font-medium rounded-lg"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Sign In
@@ -152,11 +159,6 @@ export default function ForgotPasswordPage() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Footer */}
-        <div className="mt-8 text-center text-sm text-muted-foreground">
-          <p>© 2025 IEEE WIE. All rights reserved.</p>
-        </div>
       </div>
     </div>
   )

@@ -127,15 +127,6 @@ export default function WorkersPage() {
                   </div>
                 )}
               </div>
-
-              <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                  View Profile
-                </Button>
-                <Button variant="ghost" size="sm" className="flex-1">
-                  Track GPS
-                </Button>
-              </div>
             </CardContent>
           </Card>
         ))}

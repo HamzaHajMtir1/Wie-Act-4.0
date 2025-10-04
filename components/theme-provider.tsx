@@ -31,19 +31,19 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(defaultTheme)
   const [mounted, setMounted] = useState(false)
 
+  // Initialize theme from localStorage after component mounts (client-side only)
   useEffect(() => {
-    const savedTheme = typeof window !== 'undefined' 
-      ? (localStorage?.getItem(storageKey) as Theme) || defaultTheme
-      : defaultTheme
-    setTheme(savedTheme)
     setMounted(true)
-  }, [defaultTheme, storageKey])
+    const storedTheme = localStorage.getItem(storageKey) as Theme
+    if (storedTheme) {
+      setTheme(storedTheme)
+    }
+  }, [storageKey])
 
   useEffect(() => {
     if (!mounted) return
-    
-    const root = window.document.documentElement
 
+    const root = window.document.documentElement
     root.classList.remove("light", "dark")
 
     if (theme === "system") {
@@ -57,16 +57,21 @@ export function ThemeProvider({
     }
 
     root.classList.add(theme)
-  }, [theme])
+  }, [theme, mounted])
 
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      if (typeof window !== 'undefined') {
-        localStorage?.setItem(storageKey, theme)
+      if (mounted) {
+        localStorage.setItem(storageKey, theme)
       }
       setTheme(theme)
     },
+  }
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return <>{children}</>
   }
 
   return (
