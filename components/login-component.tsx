@@ -151,7 +151,7 @@ export default function LoginComponent() {
                   </div>
                 ) : (
                   <>
-                    <LogIn className="mr-2 h-5 w-5 text-black" />
+                    <LogIn className="mr-2 h-5 w-5" />
                     Login
                   </>
                 )}
